@@ -1,0 +1,1803 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>BeveiligingsPro</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --black:#000000;
+  --near-black:#111111;
+  --dark:#1a1a1a;
+  --dark2:#242424;
+  --dark3:#2e2e2e;
+  --border:#333333;
+  --muted:#888888;
+  --light:#f5f5f5;
+  --white:#ffffff;
+  --accent:#ffffff;
+  --gold:#f5c518;
+  --blue:#276ef1;
+  --green:#06c270;
+  --red:#e11900;
+  --orange:#ff6900;
+  --radius:16px;
+  --radius-sm:10px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+html,body{height:100%;background:var(--black);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;overflow:hidden;}
+
+/* ── SHELL ── */
+#app{display:flex;flex-direction:column;height:100vh;max-width:430px;margin:0 auto;position:relative;background:var(--black);}
+
+/* ── TOP BAR ── */
+.topbar{
+  background:var(--black);
+  padding:16px 20px 12px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+  position:relative;z-index:10;
+}
+.topbar-logo{font-size:1.2rem;font-weight:800;letter-spacing:-0.5px;}
+.topbar-logo span{color:var(--gold);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.avatar{width:36px;height:36px;border-radius:50%;background:var(--dark3);display:flex;align-items:center;justify-content:center;font-size:1rem;border:2px solid var(--border);}
+.notif-btn{width:36px;height:36px;border-radius:50%;background:var(--dark2);display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;border:none;color:white;position:relative;}
+.notif-dot{width:8px;height:8px;background:var(--red);border-radius:50%;position:absolute;top:5px;right:5px;border:2px solid var(--black);}
+
+/* ── SCROLL AREA ── */
+.scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;}
+.scroll-area::-webkit-scrollbar{display:none;}
+
+/* ── PAGES ── */
+.page{display:none;padding-bottom:90px;}
+.page.active{display:block;}
+
+/* ── HERO (Dashboard) ── */
+.hero{
+  background:linear-gradient(160deg,var(--dark2) 0%,var(--dark) 100%);
+  padding:24px 20px 28px;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'🛡️';font-size:120px;position:absolute;right:-20px;top:-10px;
+  opacity:0.07;line-height:1;
+}
+.hero-greet{font-size:0.8rem;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.hero-title{font-size:1.5rem;font-weight:800;line-height:1.2;margin-bottom:8px;}
+.hero-title span{color:var(--gold);}
+.hero-sub{font-size:0.85rem;color:var(--muted);line-height:1.5;}
+.hero-status{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(6,194,112,0.15);border:1px solid rgba(6,194,112,0.3);
+  color:var(--green);border-radius:20px;padding:5px 12px;
+  font-size:0.75rem;font-weight:700;margin-top:14px;
+}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+/* ── QUICK STATS ── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px 20px 0;}
+.stat-tile{
+  background:var(--dark2);border-radius:var(--radius-sm);
+  padding:14px 10px;text-align:center;border:1px solid var(--border);
+}
+.stat-tile .num{font-size:1.5rem;font-weight:800;line-height:1;}
+.stat-tile .lbl{font-size:0.68rem;color:var(--muted);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+
+/* ── SECTION HEADER ── */
+.sec-header{padding:20px 20px 10px;display:flex;align-items:center;justify-content:space-between;}
+.sec-title{font-size:1rem;font-weight:800;}
+.sec-link{font-size:0.8rem;color:var(--muted);cursor:pointer;}
+
+/* ── MODULE CARDS (horizontal scroll) ── */
+.cards-scroll{display:flex;gap:12px;padding:0 20px 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.cards-scroll::-webkit-scrollbar{display:none;}
+.module-card{
+  min-width:160px;background:var(--dark2);border-radius:var(--radius);
+  padding:18px 16px;cursor:pointer;border:1px solid var(--border);
+  transition:transform 0.18s,border-color 0.18s;flex-shrink:0;
+}
+.module-card:active{transform:scale(0.96);}
+.module-card.gold{border-color:var(--gold);background:linear-gradient(135deg,#2a2200,#1a1a00);}
+.mc-icon{font-size:1.8rem;margin-bottom:10px;}
+.mc-title{font-size:0.88rem;font-weight:800;margin-bottom:4px;}
+.mc-sub{font-size:0.75rem;color:var(--muted);line-height:1.4;}
+.mc-arrow{color:var(--muted);font-size:0.75rem;margin-top:10px;}
+
+/* ── QUICK ACTIONS ── */
+.actions-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 20px;}
+.action-btn{
+  background:var(--dark2);border-radius:var(--radius-sm);
+  padding:14px 8px;text-align:center;cursor:pointer;
+  border:1px solid var(--border);transition:transform 0.15s,background 0.15s;
+}
+.action-btn:active{transform:scale(0.93);background:var(--dark3);}
+.action-icon{font-size:1.4rem;margin-bottom:6px;}
+.action-lbl{font-size:0.68rem;color:var(--muted);font-weight:600;}
+
+/* ── ALERT BANNER ── */
+.alert-banner{
+  margin:16px 20px 0;border-radius:var(--radius-sm);
+  padding:14px 16px;display:flex;gap:12px;align-items:flex-start;
+}
+.alert-banner.warn{background:rgba(245,197,24,0.12);border:1px solid rgba(245,197,24,0.25);}
+.alert-banner.info{background:rgba(39,110,241,0.12);border:1px solid rgba(39,110,241,0.25);}
+.alert-banner.danger{background:rgba(225,25,0,0.12);border:1px solid rgba(225,25,0,0.25);}
+.alert-banner.success{background:rgba(6,194,112,0.12);border:1px solid rgba(6,194,112,0.25);}
+.ab-icon{font-size:1.2rem;flex-shrink:0;}
+.ab-text{font-size:0.82rem;line-height:1.5;color:var(--light);}
+.ab-text strong{color:var(--white);}
+
+/* ── CONTENT PAGE HEADER ── */
+.content-header{
+  padding:20px 20px 16px;
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;background:var(--black);z-index:5;
+}
+.back-btn{
+  display:flex;align-items:center;gap:8px;
+  background:none;border:none;color:var(--muted);
+  font-size:0.85rem;cursor:pointer;padding:0 0 12px;
+  font-family:inherit;
+}
+.back-btn:hover{color:var(--white);}
+.content-page-title{font-size:1.4rem;font-weight:800;display:flex;align-items:center;gap:10px;}
+.content-page-sub{font-size:0.82rem;color:var(--muted);margin-top:4px;}
+
+/* ── CARDS IN CONTENT ── */
+.content-body{padding:16px 20px;}
+.info-card{
+  background:var(--dark2);border-radius:var(--radius);
+  margin-bottom:12px;border:1px solid var(--border);overflow:hidden;
+}
+.ic-header{
+  padding:16px 18px;display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;
+}
+.ic-header-left{display:flex;align-items:center;gap:12px;}
+.ic-icon-wrap{
+  width:40px;height:40px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+  flex-shrink:0;
+}
+.ic-title{font-size:0.92rem;font-weight:700;}
+.ic-sub{font-size:0.75rem;color:var(--muted);margin-top:2px;}
+.ic-chevron{color:var(--muted);font-size:0.9rem;transition:transform 0.2s;flex-shrink:0;}
+.ic-chevron.open{transform:rotate(180deg);}
+.ic-body{
+  padding:0 18px;max-height:0;overflow:hidden;
+  transition:max-height 0.35s ease,padding 0.2s;
+  border-top:0px solid var(--border);
+}
+.ic-body.open{
+  max-height:1000px;padding:16px 18px;
+  border-top:1px solid var(--border);
+}
+.ic-body p,.ic-body li{font-size:0.85rem;line-height:1.7;color:var(--light);}
+.ic-body ul{margin-left:16px;margin-top:8px;}
+.ic-body li{margin-bottom:4px;}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;font-size:0.82rem;}
+.tbl th{background:var(--dark3);color:var(--muted);padding:9px 12px;text-align:left;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--light);}
+.tbl tr:last-child td{border-bottom:none;}
+
+/* ── TAGS ── */
+.tag{display:inline-block;padding:3px 9px;border-radius:20px;font-size:0.7rem;font-weight:700;}
+.t-blue{background:rgba(39,110,241,0.2);color:#76a9ff;}
+.t-green{background:rgba(6,194,112,0.2);color:#06c270;}
+.t-orange{background:rgba(255,105,0,0.2);color:#ff9447;}
+.t-red{background:rgba(225,25,0,0.2);color:#ff6b6b;}
+.t-gold{background:rgba(245,197,24,0.15);color:var(--gold);}
+
+/* ── PILL TABS ── */
+.pill-tabs{display:flex;gap:8px;padding:12px 20px;overflow-x:auto;}
+.pill-tabs::-webkit-scrollbar{display:none;}
+.pill{
+  padding:8px 16px;border-radius:20px;font-size:0.8rem;font-weight:700;
+  cursor:pointer;white-space:nowrap;transition:all 0.15s;
+  border:1px solid var(--border);background:var(--dark2);color:var(--muted);
+}
+.pill.active{background:var(--white);color:var(--black);border-color:var(--white);}
+
+/* ── SEARCH ── */
+.search-box{
+  margin:0 20px 12px;
+  background:var(--dark2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:12px 16px;
+  display:flex;align-items:center;gap:10px;
+}
+.search-box input{
+  background:none;border:none;outline:none;color:var(--white);
+  font-size:0.9rem;flex:1;font-family:inherit;
+}
+.search-box input::placeholder{color:var(--muted);}
+.search-box span{color:var(--muted);}
+
+/* ── KENNIS CARDS ── */
+.kennis-card{
+  background:var(--dark2);border-radius:var(--radius-sm);
+  padding:16px;margin-bottom:10px;border:1px solid var(--border);
+  cursor:pointer;transition:border-color 0.15s,transform 0.15s;
+}
+.kennis-card:active{transform:scale(0.98);border-color:var(--gold);}
+.kc-cat{font-size:0.7rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px;}
+.kc-title{font-size:0.92rem;font-weight:800;margin-bottom:5px;}
+.kc-text{font-size:0.81rem;color:var(--muted);line-height:1.55;}
+
+/* ── CHECKLIST ── */
+.cl-item{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 0;border-bottom:1px solid var(--border);
+}
+.cl-item:last-child{border-bottom:none;}
+.cl-check{
+  width:24px;height:24px;border-radius:50%;
+  border:2px solid var(--border);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all 0.2s;font-size:0.8rem;
+}
+.cl-check.done{background:var(--green);border-color:var(--green);color:white;}
+.cl-label{font-size:0.87rem;flex:1;line-height:1.4;}
+.cl-label.done{text-decoration:line-through;color:var(--muted);}
+.cl-progress{
+  height:4px;background:var(--dark3);border-radius:2px;
+  margin-bottom:16px;overflow:hidden;
+}
+.cl-progress-fill{height:100%;border-radius:2px;background:var(--green);transition:width 0.4s;}
+.cl-progress-label{font-size:0.75rem;color:var(--muted);margin-bottom:6px;text-align:right;}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;
+  background:rgba(0,0,0,0.92);backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:grid;grid-template-columns:repeat(5,1fr);
+  padding:10px 0 calc(10px + var(--safe-bottom));
+  z-index:100;
+}
+.nav-btn{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  cursor:pointer;padding:4px 0;border:none;background:none;color:var(--muted);
+  font-family:inherit;transition:color 0.15s;
+}
+.nav-btn.active{color:var(--white);}
+.nav-btn:active{transform:scale(0.9);}
+.nav-icon-wrap{
+  width:32px;height:32px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;transition:background 0.15s;
+}
+.nav-btn.active .nav-icon-wrap{background:var(--dark3);}
+.nav-lbl{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+
+/* ── SOS BUTTON ── */
+.sos-btn{
+  position:fixed;bottom:90px;right:20px;
+  width:56px;height:56px;border-radius:50%;
+  background:var(--red);color:white;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.7rem;font-weight:900;cursor:pointer;
+  box-shadow:0 4px 20px rgba(225,25,0,0.5);
+  border:none;font-family:inherit;z-index:90;
+  animation:sos-pulse 3s infinite;
+  letter-spacing:0.5px;
+}
+@keyframes sos-pulse{0%,100%{box-shadow:0 4px 20px rgba(225,25,0,0.5);}50%{box-shadow:0 4px 30px rgba(225,25,0,0.8),0 0 0 8px rgba(225,25,0,0.15);}}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);
+  background:var(--white);color:var(--black);
+  padding:12px 20px;border-radius:30px;font-size:0.85rem;font-weight:700;
+  z-index:200;opacity:0;transition:all 0.3s;white-space:nowrap;
+  box-shadow:0 4px 20px rgba(0,0,0,0.3);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:var(--border);margin:4px 0;}
+
+/* ── HIGHLIGHT BOX ── */
+.highlight{
+  border-radius:var(--radius-sm);padding:14px 16px;
+  margin-bottom:12px;font-size:0.85rem;line-height:1.6;
+}
+.hl-gold{background:rgba(245,197,24,0.08);border-left:3px solid var(--gold);}
+.hl-red{background:rgba(225,25,0,0.08);border-left:3px solid var(--red);}
+.hl-green{background:rgba(6,194,112,0.08);border-left:3px solid var(--green);}
+.hl-blue{background:rgba(39,110,241,0.08);border-left:3px solid var(--blue);}
+
+/* ── STEP CARDS ── */
+.step-card{
+  display:flex;gap:14px;padding:12px 0;
+  border-bottom:1px solid var(--border);align-items:flex-start;
+}
+.step-card:last-child{border-bottom:none;}
+.step-num{
+  width:30px;height:30px;border-radius:50%;
+  background:var(--dark3);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.8rem;font-weight:800;flex-shrink:0;color:var(--gold);
+}
+.step-body{flex:1;}
+.step-title{font-size:0.88rem;font-weight:700;margin-bottom:3px;}
+.step-text{font-size:0.8rem;color:var(--muted);line-height:1.5;}
+
+/* ── CATEGORY SELECTOR ── */
+.cat-row{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;}
+.cat-row::-webkit-scrollbar{display:none;}
+.cat-chip{
+  padding:6px 14px;border-radius:20px;font-size:0.76rem;font-weight:700;
+  cursor:pointer;white-space:nowrap;border:1px solid var(--border);
+  background:var(--dark2);color:var(--muted);transition:all 0.15s;
+}
+.cat-chip.active{background:var(--gold);color:var(--black);border-color:var(--gold);}
+
+/* ── QUIZ ── */
+.quiz-cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 20px 20px;}
+.quiz-cat-card{
+  background:var(--dark2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px 16px;cursor:pointer;text-align:center;transition:all 0.18s;
+}
+.quiz-cat-card:active{transform:scale(0.95);}
+.quiz-cat-card.locked{opacity:0.4;pointer-events:none;}
+.qcc-icon{font-size:2rem;margin-bottom:8px;}
+.qcc-title{font-size:0.88rem;font-weight:800;margin-bottom:4px;}
+.qcc-sub{font-size:0.72rem;color:var(--muted);}
+.qcc-score{
+  display:inline-block;margin-top:8px;
+  font-size:0.7rem;font-weight:700;padding:3px 9px;border-radius:20px;
+  background:rgba(245,197,24,0.15);color:var(--gold);
+}
+.quiz-header{padding:16px 20px 0;display:flex;align-items:center;justify-content:space-between;}
+.quiz-progress-wrap{padding:0 20px 12px;}
+.quiz-progress-bar{height:6px;background:var(--dark3);border-radius:3px;overflow:hidden;margin-top:6px;}
+.quiz-progress-fill{height:100%;border-radius:3px;background:var(--gold);transition:width 0.4s ease;}
+.quiz-qnum{font-size:0.75rem;color:var(--muted);font-weight:700;}
+.quiz-question-wrap{padding:0 20px 16px;}
+.quiz-question{font-size:1.05rem;font-weight:800;line-height:1.4;color:var(--white);}
+.quiz-options{padding:0 20px;display:flex;flex-direction:column;gap:10px;}
+.quiz-option{
+  background:var(--dark2);border:2px solid var(--border);border-radius:var(--radius-sm);
+  padding:14px 16px;cursor:pointer;font-size:0.88rem;font-weight:600;
+  text-align:left;color:var(--white);font-family:inherit;
+  transition:all 0.18s;display:flex;align-items:center;gap:12px;
+}
+.quiz-option:active{transform:scale(0.98);}
+.quiz-option.correct{background:rgba(6,194,112,0.15);border-color:var(--green);color:var(--green);}
+.quiz-option.wrong{background:rgba(225,25,0,0.12);border-color:var(--red);color:var(--red);}
+.quiz-option.show-correct{background:rgba(6,194,112,0.08);border-color:rgba(6,194,112,0.4);}
+.quiz-option.disabled{pointer-events:none;}
+.quiz-opt-letter{
+  width:28px;height:28px;border-radius:50%;background:var(--dark3);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;flex-shrink:0;
+}
+.quiz-option.correct .quiz-opt-letter{background:var(--green);border-color:var(--green);color:white;}
+.quiz-option.wrong .quiz-opt-letter{background:var(--red);border-color:var(--red);color:white;}
+.quiz-feedback{
+  margin:14px 20px 0;border-radius:var(--radius-sm);padding:13px 16px;
+  font-size:0.84rem;line-height:1.55;display:none;
+}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.correct-fb{background:rgba(6,194,112,0.12);border:1px solid rgba(6,194,112,0.3);color:#b7f5d8;}
+.quiz-feedback.wrong-fb{background:rgba(225,25,0,0.1);border:1px solid rgba(225,25,0,0.25);color:#ffb3b3;}
+.quiz-next-btn{
+  margin:16px 20px 0;width:calc(100% - 40px);padding:14px;
+  background:var(--white);color:var(--black);border:none;border-radius:var(--radius-sm);
+  font-size:0.9rem;font-weight:800;cursor:pointer;font-family:inherit;
+  display:none;transition:opacity 0.2s;
+}
+.quiz-next-btn.show{display:block;}
+.quiz-result-wrap{padding:30px 20px;text-align:center;}
+.quiz-result-icon{font-size:4rem;margin-bottom:16px;}
+.quiz-result-score{font-size:2.5rem;font-weight:900;color:var(--gold);margin-bottom:6px;}
+.quiz-result-label{font-size:1rem;font-weight:800;margin-bottom:6px;}
+.quiz-result-sub{font-size:0.85rem;color:var(--muted);margin-bottom:24px;line-height:1.5;}
+.quiz-result-badge{
+  display:inline-block;padding:8px 20px;border-radius:20px;
+  font-size:0.8rem;font-weight:800;margin-bottom:20px;
+}
+.badge-gold{background:rgba(245,197,24,0.2);color:var(--gold);border:1px solid rgba(245,197,24,0.4);}
+.badge-silver{background:rgba(150,150,150,0.2);color:#aaa;border:1px solid rgba(150,150,150,0.3);}
+.badge-bronze{background:rgba(205,127,50,0.2);color:#cd7f32;border:1px solid rgba(205,127,50,0.3);}
+.quiz-retry-btn{
+  width:100%;padding:14px;background:var(--dark2);border:1px solid var(--border);
+  color:var(--white);border-radius:var(--radius-sm);font-size:0.88rem;font-weight:700;
+  cursor:pointer;font-family:inherit;margin-bottom:10px;
+}
+.quiz-home-btn{
+  width:100%;padding:14px;background:var(--white);border:none;
+  color:var(--black);border-radius:var(--radius-sm);font-size:0.88rem;font-weight:800;
+  cursor:pointer;font-family:inherit;
+}
+
+/* ── EMERGENCY MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.85);
+  z-index:300;display:none;align-items:flex-end;justify-content:center;
+  backdrop-filter:blur(4px);
+}
+.modal-overlay.open{display:flex;}
+.modal-sheet{
+  background:var(--dark2);border-radius:24px 24px 0 0;
+  width:100%;max-width:430px;padding:24px 24px calc(24px + var(--safe-bottom));
+  animation:slideUp 0.3s ease;border:1px solid var(--border);border-bottom:none;
+}
+@keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;}
+.modal-title{font-size:1.1rem;font-weight:800;margin-bottom:6px;}
+.modal-sub{font-size:0.82rem;color:var(--muted);margin-bottom:20px;}
+.sos-action{
+  display:flex;align-items:center;gap:14px;padding:14px;
+  background:var(--dark3);border-radius:var(--radius-sm);
+  margin-bottom:10px;cursor:pointer;border:1px solid var(--border);
+  transition:border-color 0.15s;
+}
+.sos-action:active{border-color:var(--red);}
+.sos-action-icon{font-size:1.5rem;}
+.sos-action-title{font-size:0.9rem;font-weight:700;}
+.sos-action-sub{font-size:0.76rem;color:var(--muted);}
+.modal-close{
+  width:100%;padding:14px;background:var(--dark3);
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  color:var(--white);font-size:0.88rem;font-weight:700;cursor:pointer;
+  margin-top:6px;font-family:inherit;
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-logo">Beveiligings<span>Pro</span></div>
+    <div class="topbar-right">
+      <button class="notif-btn" onclick="showToast('Geen nieuwe meldingen')">🔔<div class="notif-dot"></div></button>
+      <div class="avatar">👮</div>
+    </div>
+  </div>
+
+  <!-- SCROLL AREA -->
+  <div class="scroll-area" id="scrollArea">
+
+    <!-- ═══════════════════════ DASHBOARD ═══════════════════════ -->
+    <div class="page active" id="pg-home">
+
+      <div class="hero">
+        <div class="hero-greet">Welkom terug</div>
+        <div class="hero-title">Klaar voor<br>je <span>dienst?</span></div>
+        <div class="hero-sub">Particuliere beveiliging Nederland</div>
+        <div class="hero-status"><span class="status-dot"></span> Platform actueel</div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-tile"><div class="num" style="color:var(--gold)">24</div><div class="lbl">Wetsart.</div></div>
+        <div class="stat-tile"><div class="num" style="color:var(--blue)">18</div><div class="lbl">Protocollen</div></div>
+        <div class="stat-tile"><div class="num" style="color:var(--green)">42</div><div class="lbl">Artikelen</div></div>
+      </div>
+
+      <div class="sec-header">
+        <div class="sec-title">Modules</div>
+        <div class="sec-link">Alle →</div>
+      </div>
+
+      <div class="cards-scroll">
+        <div class="module-card gold" onclick="navTo('wetgeving')">
+          <div class="mc-icon">⚖️</div>
+          <div class="mc-title">Wettelijke Kaders</div>
+          <div class="mc-sub">Wpbr, AVG,<br>bevoegdheden</div>
+          <div class="mc-arrow">Bekijk →</div>
+        </div>
+        <div class="module-card" onclick="navTo('gebouwen')">
+          <div class="mc-icon">🏢</div>
+          <div class="mc-title">Gebouwbeveiliging</div>
+          <div class="mc-sub">Toegang, surveillance,<br>incidenten</div>
+          <div class="mc-arrow">Bekijk →</div>
+        </div>
+        <div class="module-card" onclick="navTo('brand')">
+          <div class="mc-icon">🔥</div>
+          <div class="mc-title">Brandveiligheid</div>
+          <div class="mc-sub">BHV, evacuatie,<br>blusapparatuur</div>
+          <div class="mc-arrow">Bekijk →</div>
+        </div>
+        <div class="module-card" onclick="navTo('kennis')">
+          <div class="mc-icon">📚</div>
+          <div class="mc-title">Kennisbank</div>
+          <div class="mc-sub">Artikelen &amp;<br>definities</div>
+          <div class="mc-arrow">Bekijk →</div>
+        </div>
+      </div>
+
+      <div class="sec-header">
+        <div class="sec-title">Snelle acties</div>
+      </div>
+
+      <div class="actions-grid">
+        <div class="action-btn" onclick="navTo('checklists')">
+          <div class="action-icon">✅</div>
+          <div class="action-lbl">Checklist</div>
+        </div>
+        <div class="action-btn" onclick="openSOS()">
+          <div class="action-icon">🆘</div>
+          <div class="action-lbl">Noodgeval</div>
+        </div>
+        <div class="action-btn" onclick="navTo('quiz')">
+          <div class="action-icon">🎯</div>
+          <div class="action-lbl">Quiz</div>
+        </div>
+        <div class="action-btn" onclick="navTo('kennis')">
+          <div class="action-icon">🔍</div>
+          <div class="action-lbl">Zoeken</div>
+        </div>
+      </div>
+
+      <div class="alert-banner warn" style="margin-top:16px;">
+        <span class="ab-icon">⚠️</span>
+        <div class="ab-text"><strong>Tip:</strong> Tik op de rode SOS-knop bij een noodgeval voor directe hulpnummers.</div>
+      </div>
+
+      <div class="sec-header" style="margin-top:4px;">
+        <div class="sec-title">Wetgeving snel</div>
+      </div>
+      <div style="padding:0 20px 8px;display:flex;flex-wrap:wrap;gap:6px;">
+        <span class="tag t-blue">Wpbr 1997</span>
+        <span class="tag t-blue">AVG/GDPR</span>
+        <span class="tag t-orange">Politiewet 2012</span>
+        <span class="tag t-green">Arbowet</span>
+        <span class="tag t-red">Bouwbesluit 2012</span>
+        <span class="tag t-gold">Art. 41 Sr</span>
+        <span class="tag t-blue">Art. 53 Sv</span>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ WETGEVING ═══════════════════════ -->
+    <div class="page" id="pg-wetgeving">
+      <div class="content-header">
+        <button class="back-btn" onclick="goBack()">← Terug</button>
+        <div class="content-page-title">⚖️ Wettelijke Kaders</div>
+        <div class="content-page-sub">Wet- en regelgeving voor particuliere beveiligers in NL</div>
+      </div>
+      <div class="pill-tabs">
+        <div class="pill active" onclick="setPill(this,'wet-wpbr')">Wpbr</div>
+        <div class="pill" onclick="setPill(this,'wet-avg')">AVG / Privacy</div>
+        <div class="pill" onclick="setPill(this,'wet-overig')">Overig</div>
+      </div>
+
+      <!-- WPBR -->
+      <div class="content-body" id="wet-wpbr">
+        <div class="alert-banner warn" style="margin:0 0 14px;">
+          <span class="ab-icon">⚠️</span>
+          <div class="ab-text"><strong>Let op:</strong> Wetgeving kan wijzigen. Raadpleeg wetten.overheid.nl voor actuele teksten.</div>
+        </div>
+
+        <div class="info-card">
+          <div class="ic-header" onclick="toggleCard(this)">
+            <div class="ic-header-left">
+              <div class="ic-icon-wrap" style="background:rgba(245,197,24,0.15)">📜</div>
+              <div><div class="ic-title">Art. 7 — Vergunningsplicht</div><div class="ic-sub">Wpbr 1997</div></div>
+            </div>
+            <div class="ic-chevron">▾</div>
+          </div>
+          <div class="ic-body">
+            <p>Verboden om zonder vergunning van de Minister van Justitie en Veiligheid een beveiligingsorganisatie te drijven.</p>
+            <p style="margin-top:10px;"><strong style="color:var(--gold)">Vereisten:</strong></p>
+            <ul>
+              <li>Betrouwbaarheid leidinggevenden (VOG)</li>
+              <li>Vakbekwaamheid (diploma-eisen MBO/ECABO)</li>
+              <li>Financiële draagkracht</li>
+              <li>Naleving cao-verplichtingen</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="ic-header" onclick="toggleCard(this)">
+            <div class="ic-header-left">
+              <div class="ic-icon-wrap" style="background:rgba(39,110,241,0.15)">🪪</div>
+              <div><div class="ic-title">Art. 9 — Eisen personeel</div><div class="ic-sub">Beveiligingspas & VOG</div></div>
+            </div>
+            <div class="ic-chevron">▾</div>
+          </div>
+          <div class="ic-body">
+            <ul>
+              <li><strong>Legitimatiebewijs</strong> — altijd bij zich tijdens dienst</li>
+              <li><strong>VOG</strong> — verklaring omtrent het gedrag</li>
+              <li><strong>Bekwaamheidsbewijs</strong> — geldig diploma</li>
+              <li><strong>Minimumleeftijd:</strong> 18 jaar</li>
+              <li><strong>BORG-registratie</strong> — ingeschreven in register</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="ic-header" onclick="toggleCard(this)">
+            <div class="ic-header-left">
+              <div class="ic-icon-wrap" style="background:rgba(255,105,0,0.15)">🚨</div>
+              <div><div class="ic-title">Bevoegdheden bewaker</div><div class="ic-sub">Art. 53 Sv · Art. 41 Sr</div></div>
+            </div>
+            <div class="ic-chevron">▾</div>
+          </div>
+          <div class="ic-body">
+            <div class="highlight hl-red">
+              <strong>Geen politiebevoegdheden!</strong> Een particuliere beveiliger is een burger, geen opsporingsambtenaar.
+            </div>
+            <div class="highlight hl-gold">
+              <strong>Aanhouding op heterdaad (art. 53 Sv)</strong><br>
+              Mag alleen bij ontdekking op heterdaad van een misdrijf. Onmiddellijk overdragen aan politie.
+            </div>
+            <div class="highlight hl-blue">
+              <strong>Noodweer (art. 41 Sr)</strong><br>
+              Zelfverdediging is gerechtvaardigd bij ogenblikkelijke wederrechtelijke aanranding. Reactie moet proportioneel zijn.
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="ic-header" onclick="toggleCard(this)">
+            <div class="ic-header-left">
+              <div class="ic-icon-wrap" style="background:rgba(6,194,112,0.15)">🔧</div>
+              <div><div class="ic-title">Uitrusting & bewapening</div><div class="ic-sub">Besluit bewapening en uitrusting</div></div>
+            </div>
+            <div class="ic-chevron">▾</div>
+          </div>
+          <div class="ic-body">
+            <p>Uitsluitend met <strong>aparte vergunning en opleiding:</strong></p>
+            <ul style="margin-top:8px;">
+              <li>🔒 Handboeien</li>
+              <li>🥢 Wapenstok</li>
+              <li>💨 Pepperspray</li>
+            </ul>
+            <p style="margin-top:10px;color:var(--muted);">Vuurwapens zijn in principe niet toegestaan voor particuliere beveiligers, tenzij specifiek vergund (bijv. geld- of waardetransport).</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- AVG -->
+      <div class="content-body" id="wet-avg" style="display:none;">
+        <div class="info-card">
+          <div class="ic-header" onclick="toggleCard(this)">
+            <div class="ic-header-left">
+              <div class="ic-icon-wrap" style="background:rgba(39,110,241,0.15)">🎥</div>
+              <div><div class="ic-title">Cameratoezicht</div><div class="ic-sub">AVG-regels voor bewakers</div></div>
+            </div>
+            <div class="ic-chevron">▾</div>
+          </div>
+          <div class="ic-body">
+            <div class="highlight hl-red"><strong>Bewaartermijn beelden: maximaal 4 weken</strong> (tenzij bewijs van incident)</div>
+            <ul>
+              <li>Legitiem doel vereist (bijv. diefstalpreventie, veiligheid)</li>
+              <li>Camera's op openbare weg → gemeentelijke ontheffing vereist</li>
+              <li>Zichtbare camerasticker verplicht</li>
+              <li>Toegang tot beelden alleen voor geautoriseerden</li>
+              <li>Medewerkers informeren over werkplekcamera's</li>
+              <li>Beelden nooit doorgeven aan derden zonder grondslag</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="ic-header" onclick="toggleCard(this)">
+            <div class="ic-header-left">
+              <div class="ic-icon-wrap" style="background:rgba(245,197,24,0.15)">📋</div>
+              <div><div class="ic-title">Wat mag je registreren?</div><div class="ic-sub">Persoonsgegevens bezoekers</div></div>
+            </div>
+            <div class="ic-chevron">▾</div>
+          </div>
+          <div class="ic-body">
+            <table class="tbl">
+              <thead><tr><th>Gegeven</th><th>Mag?</th></tr></thead>
+              <tbody>
+                <tr><td>Naam bezoeker</td><td><span class="tag t-green">✓ Ja</span></td></tr>
+                <tr><td>Tijdstip aankomst</td><td><span class="tag t-orange">Beperkt</span></td></tr>
+                <tr><td>Kenteken voertuig</td><td><span class="tag t-green">✓ Ja</span></td></tr>
+                <tr><td>Kopie ID-bewijs</td><td><span class="tag t-red">✗ Nee</span></td></tr>
+                <tr><td>BSN-nummer</td><td><span class="tag t-red">✗ Nee</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- OVERIG -->
+      <div class="content-body" id="wet-overig" style="display:none;">
+        <table class="tbl" style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
+          <thead><tr><th>Wet</th><th>Belang</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Politiewet 2012</strong></td><td style="color:var(--muted)">Bevoegdheden politie vs. bewaker</td></tr>
+            <tr><td><strong>Wetboek Sv art. 53</strong></td><td style="color:var(--muted)">Aanhouding op heterdaad</td></tr>
+            <tr><td><strong>Wetboek Sr art. 41</strong></td><td style="color:var(--muted)">Noodweer (zelfverdediging)</td></tr>
+            <tr><td><strong>Arbowet</strong></td><td style="color:var(--muted)">Veilige werkomgeving, RI&E</td></tr>
+            <tr><td><strong>Bouwbesluit 2012</strong></td><td style="color:var(--muted)">Brandveiligheid gebouwen</td></tr>
+            <tr><td><strong>AVG / GDPR</strong></td><td style="color:var(--muted)">Persoonsgegevens & camera's</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ GEBOUWEN ═══════════════════════ -->
+    <div class="page" id="pg-gebouwen">
+      <div class="content-header">
+        <button class="back-btn" onclick="goBack()">← Terug</button>
+        <div class="content-page-title">🏢 Gebouwbeveiliging</div>
+        <div class="content-page-sub">Toegangscontrole, surveillance en incidentbeheer</div>
+      </div>
+      <div class="pill-tabs">
+        <div class="pill active" onclick="setPill(this,'geb-toegang')">Toegang</div>
+        <div class="pill" onclick="setPill(this,'geb-surveillance')">Surveillance</div>
+        <div class="pill" onclick="setPill(this,'geb-incident')">Incidenten</div>
+      </div>
+
+      <div class="content-body" id="geb-toegang">
+        <div class="info-card">
+          <div class="ic-header" onclick="toggleCard(this)">
+            <div class="ic-header-left">
+              <div class="ic-icon-wrap" style="background:rgba(6,194,112,0.15)">🚪</div>
+              <div><div class="ic-title">Receptie / Ingangscontrole</div><div class="ic-sub">Dagelijkse procedure</div></div>
+            </div>
+            <div class="ic-chevron">▾</div>
+          </div>
+          <div class="ic-body">
+            <ul>
+              <li>Controleer legitimatie bij onbekende bezoekers</li>
+              <li>Registreer naam, bedrijf, doel en tijdstip</li>
+              <li>Verstrek bezoekerspas (zichtbaar dragen)</li>
+              <li>Begeleid naar bestemming of wacht op gastheer</li>
+              <li>Retourneer pas bij vertrek; log vertrektijd</li>
+              <li>Meld ongeautoriseerde pogingen direct</li>
+            </ul>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="ic-header" onclick="toggleCard(this)">
+            <div class="ic-header-left">
+              <div class="ic-icon-wrap" style="background:rgba(225,25,0,0.15)">🚫</div>
+              <div><div class="ic-title">Verboden zones</div><div class="ic-sub">Altijd extra aandacht</div></div>
+            </div>
+            <div class="ic-chevron">▾</div>
+          </div>
+          <div class="ic-body">
+            <ul>
+              <li>🖥️ Serverruimtes en datakluizen</li>
+              <li>⚡ Elektra- en CV-ruimtes</li>
+              <li>📁 Archiefruimtes met vertrouwelijke documenten</li>
+              <li>📦 Magazijnen en kluisruimtes</li>
+              <li>👔 Directieverdiepingen zonder autorisatie</li>
+            </ul>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="ic-header" onclick="toggleCard(this)">
+            <div class="ic-header-left">
+              <div class="ic-icon-wrap" style="background:rgba(39,110,241,0.15)">🔐</div>
+              <div><div class="ic-title">Elektronische systemen</div><div class="ic-sub">Toegangscontrole tech</div></div>
+            </div>
+            <div class="ic-chevron">▾</div>
+          </div>
+          <div class="ic-body">
+            <ul>
+              <li>Toegangspasjes / biometrie — controleer dagelijks op werking</li>
+              <li>Intercomsystemen bij poorten</li>
+              <li>Slagbomen — test dagelijks</li>
+              <li>Alarmsystemen met doormelding meldkamer</li>
+              <li>Noodstroomvoorziening voor systemen</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-body" id="geb-surveillance" style="display:none;">
+        <div class="info-card">
+          <div class="ic-header" onclick="toggleCard(this)">
+            <div class="ic-header-left">
+              <div class="ic-icon-wrap" style="background:rgba(245,197,24,0.15)">🚶</div>
+              <div><div class="ic-title">Rondegangen</div><div class="ic-sub">Inwendige surveillance</div></div>
+            </div>
+            <div class="ic-chevron">▾</div>
+          </div>
+          <div class="ic-body">
+            <ul>
+              <li>Wissel tijden en routes — <strong>onvoorspelbaar blijven</strong></li>
+              <li>Gebruik checkpoints/QR-codes voor registratie</li>
+              <li>Let op: open deuren/ramen, verdachte objecten, beschadigingen</li>
+              <li>Controleer nooduitgangen — vrij en open van binnenuit</li>
+              <li>Rapporteer bevindingen direct in logboek</li>
+              <li>Bij afwijkingen: meld centrale meldkamer en volg protocol</li>
+            </ul>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="ic-header" onclick="toggleCard(this)">
+            <div class="ic-header-left">
+              <div class="ic-icon-wrap" style="background:rgba(0,0,0,0.3)">🌙</div>
+              <div><div class="ic-title">Nachtbeveiliging</div><div class="ic-sub">Extra maatregelen</div></div>
+            </div>
+            <div class="ic-chevron">▾</div>
+          </div>
+          <div class="ic-body">
+            <ul>
+              <li>Activeer alle beveiligingssystemen bij aanvang dienst</li>
+              <li>Verhoogde rondegangen in eerste uur na sluiting</li>
+              <li>Continue communicatie meldkamer (dode man schakelaar)</li>
+              <li>Nooit alleen risicosituaties benaderen → altijd 112</li>
+              <li>Bij alarm: systematisch maar veilig onderzoek</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-body" id="geb-incident" style="display:none;">
+        <div class="alert-banner danger" style="margin-bottom:14px;">
+          <span class="ab-icon">🚨</span>
+          <div class="ab-text"><strong>Altijd:</strong> Persoonsveiligheid → Gebouw → Eigendommen. Bij dreiging: bel 112.</div>
+        </div>
+        <div class="info-card" style="border:none;background:none;">
+          <div class="ic-body open" style="padding:0;max-height:none;border:none;">
+            <div class="step-card">
+              <div class="step-num">1</div>
+              <div class="step-body"><div class="step-title">Waarnemen</div><div class="step-text">Stel vast wat er aan de hand is. Blijf kalm en observeer nauwkeurig.</div></div>
+            </div>
+            <div class="step-card">
+              <div class="step-num">2</div>
+              <div class="step-body"><div class="step-title">Melden</div><div class="step-text">Informeer meldkamer en leidinggevende direct via het juiste kanaal.</div></div>
+            </div>
+            <div class="step-card">
+              <div class="step-num">3</div>
+              <div class="step-body"><div class="step-title">Beveiligen</div><div class="step-text">Zorg voor veiligheid aanwezigen. Schakel zo nodig hulpdiensten in (112).</div></div>
+            </div>
+            <div class="step-card">
+              <div class="step-num">4</div>
+              <div class="step-body"><div class="step-title">Afzetten</div><div class="step-text">Cordon instellen, niemand toelaten tenzij hulpdiensten.</div></div>
+            </div>
+            <div class="step-card">
+              <div class="step-num">5</div>
+              <div class="step-body"><div class="step-title">Registreren</div><div class="step-text">Schriftelijk rapport: tijdstip, beschrijving, betrokkenen, maatregelen.</div></div>
+            </div>
+            <div class="step-card">
+              <div class="step-num">6</div>
+              <div class="step-body"><div class="step-title">Nazorg</div><div class="step-text">Bespreek incident met team. Evalueer en verbeter procedures.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ BRANDVEILIGHEID ═══════════════════════ -->
+    <div class="page" id="pg-brand">
+      <div class="content-header">
+        <button class="back-btn" onclick="goBack()">← Terug</button>
+        <div class="content-page-title">🔥 Brandveiligheid</div>
+        <div class="content-page-sub">Preventie, detectie, evacuatie en BHV</div>
+      </div>
+      <div class="pill-tabs">
+        <div class="pill active" onclick="setPill(this,'br-preventie')">Preventie</div>
+        <div class="pill" onclick="setPill(this,'br-evacuatie')">Evacuatie</div>
+        <div class="pill" onclick="setPill(this,'br-blus')">Blusapparatuur</div>
+        <div class="pill" onclick="setPill(this,'br-bhv')">BHV</div>
+      </div>
+
+      <div class="content-body" id="br-preventie">
+        <div class="alert-banner danger" style="margin-bottom:14px;">
+          <span class="ab-icon">🚒</span>
+          <div class="ab-text"><strong>Bij brand: BEL 112.</strong> Nooit zelf blussen als brand groter is dan een prullenbak.</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-header" onclick="toggleCard(this)">
+            <div class="ic-header-left">
+              <div class="ic-icon-wrap" style="background:rgba(225,25,0,0.15)">📋</div>
+              <div><div class="ic-title">Bouwbesluit 2012 eisen</div><div class="ic-sub">Wettelijke minimumnormen</div></div>
+            </div>
+            <div class="ic-chevron">▾</div>
+          </div>
+          <div class="ic-body">
+            <ul>
+              <li><strong>Compartimentering:</strong> brand mag max. 60 min niet overslaan</li>
+              <li><strong>Vluchtroute breedte:</strong> min. 0,85 m (≤60 pers) / 1,2 m (meer)</li>
+              <li><strong>Max. vluchtafstand:</strong> 30 m (kantoor) / 45 m (industrie)</li>
+              <li><strong>Noodverlichting:</strong> min. 1 uur autonome werking</li>
+              <li><strong>Brandmeldinstallatie:</strong> verplicht bij bepaalde functies</li>
+            </ul>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="ic-header" onclick="toggleCard(this)">
+            <div class="ic-header-left">
+              <div class="ic-icon-wrap" style="background:rgba(245,197,24,0.15)">⚡</div>
+              <div><div class="ic-title">Top 5 brandoorzaken</div><div class="ic-sub">En hoe te voorkomen</div></div>
+            </div>
+            <div class="ic-chevron">▾</div>
+          </div>
+          <div class="ic-body">
+            <div class="step-card">
+              <div class="step-num" style="font-size:1rem;">⚡</div>
+              <div class="step-body"><div class="step-title">Kortsluiting / elektrisch</div><div class="step-text">Jaarlijkse keuring elektra (NEN 3140), geen overbelasting stekkerdozen</div></div>
+            </div>
+            <div class="step-card">
+              <div class="step-num" style="font-size:1rem;">🚬</div>
+              <div class="step-body"><div class="step-title">Roken / open vuur</div><div class="step-text">Rookverbod handhaven, geen open vuur in risicogebieden</div></div>
+            </div>
+            <div class="step-card">
+              <div class="step-num" style="font-size:1rem;">☕</div>
+              <div class="step-body"><div class="step-title">Verwarmingsapparatuur</div><div class="step-text">Controleer koffiezetapparaten e.d. bij sluiting gebouw</div></div>
+            </div>
+            <div class="step-card">
+              <div class="step-num" style="font-size:1rem;">🧪</div>
+              <div class="step-body"><div class="step-title">Brandbare stoffen</div><div class="step-text">Veilige opslag chemicaliën, gescheiden van warmtebronnen</div></div>
+            </div>
+            <div class="step-card">
+              <div class="step-num" style="font-size:1rem;">😠</div>
+              <div class="step-body"><div class="step-title">Brandstichting</div><div class="step-text">Toegangscontrole, verlichting en cameratoezicht</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-body" id="br-evacuatie" style="display:none;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;">
+          <div style="background:rgba(225,25,0,0.1);border:1px solid rgba(225,25,0,0.25);border-radius:var(--radius-sm);padding:14px;text-align:center;">
+            <div style="font-size:1.5rem;margin-bottom:6px;">🔔</div>
+            <div style="font-size:0.7rem;font-weight:800;color:var(--red);">STAP 1</div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-top:3px;">Alarm & 112</div>
+          </div>
+          <div style="background:rgba(255,105,0,0.1);border:1px solid rgba(255,105,0,0.25);border-radius:var(--radius-sm);padding:14px;text-align:center;">
+            <div style="font-size:1.5rem;margin-bottom:6px;">🚶</div>
+            <div style="font-size:0.7rem;font-weight:800;color:var(--orange);">STAP 2</div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-top:3px;">Evacueren</div>
+          </div>
+          <div style="background:rgba(6,194,112,0.1);border:1px solid rgba(6,194,112,0.25);border-radius:var(--radius-sm);padding:14px;text-align:center;">
+            <div style="font-size:1.5rem;margin-bottom:6px;">📍</div>
+            <div style="font-size:0.7rem;font-weight:800;color:var(--green);">STAP 3</div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-top:3px;">Verzamelpunt</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="ic-header" onclick="toggleCard(this)">
+            <div class="ic-header-left">
+              <div class="ic-icon-wrap" style="background:rgba(255,105,0,0.15)">👮</div>
+              <div><div class="ic-title">Taken BHV'er / Bewaker</div><div class="ic-sub">Stap voor stap</div></div>
+            </div>
+            <div class="ic-chevron">▾</div>
+          </div>
+          <div class="ic-body">
+            <ul>
+              <li>Activeer het brandalarm (handmelder of centrale)</li>
+              <li>Bel 112 — locatie, aard brand, aantal personen</li>
+              <li>Begeleid mensen rustig naar dichtstbijzijnde nooduitgang</li>
+              <li>Controleer toiletten en vergaderkamers</li>
+              <li>Sluit deuren achter je — vertraagt brandverspreiding</li>
+              <li><strong style="color:var(--red)">Gebruik NOOIT de lift bij brand</strong></li>
+              <li>Meld bij hoofd BHV: ontruiming voltooid / vermisten</li>
+              <li>Houd ingang vrij voor hulpdiensten</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-body" id="br-blus" style="display:none;">
+        <div class="highlight hl-blue" style="margin-bottom:14px;">
+          <strong>PASS methode:</strong> <strong style="color:var(--gold)">P</strong>in eruit → <strong style="color:var(--gold)">A</strong>im (richten op basis) → <strong style="color:var(--gold)">S</strong>queeze (hendel) → <strong style="color:var(--gold)">S</strong>weep (zwaaien links-rechts)
+        </div>
+        <table class="tbl" style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;">
+          <thead><tr><th>Type</th><th>Geschikt voor</th><th>Niet voor</th></tr></thead>
+          <tbody>
+            <tr><td>💨 <strong>CO₂</strong></td><td style="color:var(--muted)">Elektra, servers</td><td style="color:var(--muted)">Buiten gebruiken</td></tr>
+            <tr><td>🧴 <strong>Schuim</strong></td><td style="color:var(--muted)">Vloeistofbranden</td><td style="color:var(--muted)">Elektra, metalen</td></tr>
+            <tr><td>🌊 <strong>Water</strong></td><td style="color:var(--muted)">Hout, papier, stof</td><td style="color:var(--muted)">Vloeistoffen, elektra</td></tr>
+            <tr><td>⚪ <strong>Poeder</strong></td><td style="color:var(--muted)">Bijna alle branden</td><td style="color:var(--muted)">Fijne apparatuur</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="content-body" id="br-bhv" style="display:none;">
+        <div class="alert-banner success" style="margin-bottom:14px;">
+          <span class="ab-icon">✅</span>
+          <div class="ab-text"><strong>Wettelijk verplicht (Arbowet art. 15):</strong> Elke werkgever moet BHV organiseren. Als bewaker ben je vaak onderdeel hiervan.</div>
+        </div>
+        <div class="info-card">
+          <div class="ic-header" onclick="toggleCard(this)">
+            <div class="ic-header-left">
+              <div class="ic-icon-wrap" style="background:rgba(6,194,112,0.15)">📚</div>
+              <div><div class="ic-title">BHV-verplichtingen</div><div class="ic-sub">Opleiding & aanwezigheid</div></div>
+            </div>
+            <div class="ic-chevron">▾</div>
+          </div>
+          <div class="ic-body">
+            <ul>
+              <li>EHBO- en BHV-opleiding verplicht voor BHV'ers</li>
+              <li>Jaarlijkse herhaling training (brandoefening, ontruiming)</li>
+              <li>Min. 1 BHV'er aanwezig per dienst (bij ≥10 werknemers)</li>
+              <li>BHV-plan schriftelijk vastgelegd, bekend bij allen</li>
+              <li>Ontruimingsplan jaarlijks oefenen en actueel houden</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ KENNISBANK ═══════════════════════ -->
+    <div class="page" id="pg-kennis">
+      <div class="content-header">
+        <button class="back-btn" onclick="goBack()">← Terug</button>
+        <div class="content-page-title">📚 Kennisbank</div>
+        <div class="content-page-sub">Artikelen, definities en best practices</div>
+      </div>
+
+      <div class="content-body" style="padding-top:12px;">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" placeholder="Zoek in kennisbank..." oninput="filterKennis(this.value)" id="kennisSearch"/>
+        </div>
+
+        <div class="cat-row" id="catRow">
+          <div class="cat-chip active" onclick="filterCat(this,'alle')">Alle</div>
+          <div class="cat-chip" onclick="filterCat(this,'Bevoegdheden')">Bevoegdheden</div>
+          <div class="cat-chip" onclick="filterCat(this,'Privacy')">Privacy</div>
+          <div class="cat-chip" onclick="filterCat(this,'Procedures')">Procedures</div>
+          <div class="cat-chip" onclick="filterCat(this,'Brandveiligheid')">Brand</div>
+          <div class="cat-chip" onclick="filterCat(this,'Operationeel')">Operationeel</div>
+        </div>
+
+        <div id="kennisContainer">
+          <div class="kennis-card" data-cat="Bevoegdheden" data-tags="aanhouding heterdaad wetgeving verdachte">
+            <div class="kc-cat">Bevoegdheden</div>
+            <div class="kc-title">Aanhouding op heterdaad</div>
+            <div class="kc-text">Als burger mag je aanhouden op heterdaad van een misdrijf (art. 53 Sv). Onmiddellijk overdragen aan politie.</div>
+          </div>
+          <div class="kennis-card" data-cat="Bevoegdheden" data-tags="noodweer zelfverdediging geweld strafrecht">
+            <div class="kc-cat">Bevoegdheden</div>
+            <div class="kc-title">Noodweer (art. 41 Sr)</div>
+            <div class="kc-text">Geweld is gerechtvaardigd bij ogenblikkelijke wederrechtelijke aanranding. Reactie moet proportioneel zijn aan het gevaar.</div>
+          </div>
+          <div class="kennis-card" data-cat="Privacy" data-tags="camera avg gdpr privacy beelden">
+            <div class="kc-cat">Privacy & AVG</div>
+            <div class="kc-title">Cameratoezicht & AVG</div>
+            <div class="kc-text">Bewaartermijn max. 4 weken. Camera op openbare weg vereist gemeentelijke ontheffing. Zichtbare sticker verplicht.</div>
+          </div>
+          <div class="kennis-card" data-cat="Procedures" data-tags="rapportage logboek verslag incident schrijven">
+            <div class="kc-cat">Procedures</div>
+            <div class="kc-title">Goede rapportage schrijven</div>
+            <div class="kc-text">Bevat: datum/tijd, locatie, feiten (geen meningen), betrokkenen, maatregelen, handtekening. Feitelijk — geen aannames.</div>
+          </div>
+          <div class="kennis-card" data-cat="Operationeel" data-tags="vergunning wpbr legitimatie pas beveiligingspas">
+            <div class="kc-cat">Wpbr</div>
+            <div class="kc-title">Beveiligingspas (legitimatieplicht)</div>
+            <div class="kc-text">Altijd bij je tijdens dienst (Wpbr art. 9). Bevat naam, foto, werkgever en geldigheidsperiode.</div>
+          </div>
+          <div class="kennis-card" data-cat="Operationeel" data-tags="communicatie meldkamer radio portofoon fonetisch alfabet">
+            <div class="kc-cat">Operationeel</div>
+            <div class="kc-title">Communicatie procedures</div>
+            <div class="kc-text">Gebruik fonetisch alfabet (Alpha, Bravo, Charlie...). Identificeer jezelf altijd. Korte, duidelijke berichten. Bevestig ontvangst.</div>
+          </div>
+          <div class="kennis-card" data-cat="Brandveiligheid" data-tags="brand bhv evacuatie vluchtwegen nooduitgang">
+            <div class="kc-cat">Brandveiligheid</div>
+            <div class="kc-title">Vluchtroutes controleren</div>
+            <div class="kc-text">Nooduitgangen altijd vrij toegankelijk van binnenuit. Noodverlichting min. 1 uur autonoom. Dagelijks controleren.</div>
+          </div>
+          <div class="kennis-card" data-cat="Operationeel" data-tags="agressie omgaan conflict deescalatie">
+            <div class="kc-cat">Gedrag & Communicatie</div>
+            <div class="kc-title">Omgaan met agressie</div>
+            <div class="kc-text">De-escalatie gaat altijd voor. Kalmerende stem, open lichaamstaal, begrip tonen. Politie bij escalatie (112).</div>
+          </div>
+          <div class="kennis-card" data-cat="Procedures" data-tags="ehbo eerste hulp letsel abc reanimatie">
+            <div class="kc-cat">EHBO</div>
+            <div class="kc-title">Eerste hulp basisprincipes</div>
+            <div class="kc-text">ABC: Airway (luchtweg vrij?), Breathing (ademt?), Circulation (hartslag?). Bel 112 bij twijfel. Herstelhouding bij bewusteloze.</div>
+          </div>
+          <div class="kennis-card" data-cat="Privacy" data-tags="identiteit bezoeker controle id legitimatie">
+            <div class="kc-cat">Toegangscontrole</div>
+            <div class="kc-title">Identiteitscontrole bezoekers</div>
+            <div class="kc-text">Kopie ID-bewijs NIET maken (AVG). Mag wel type document en geldigheid controleren. BSN nooit registreren.</div>
+          </div>
+          <div class="kennis-card" data-cat="Bevoegdheden" data-tags="diefstal winkeldiefstal verdachte bewijs aanhouding">
+            <div class="kc-cat">Winkelbeveiliging</div>
+            <div class="kc-title">Winkeldiefstalbevoegdheden</div>
+            <div class="kc-text">Aanhouding alleen na concreet bewijs: zien pakken, verbergen én winkel verlaten zonder betalen. Nooit op uiterlijk of vermoeden.</div>
+          </div>
+          <div class="kennis-card" data-cat="Operationeel" data-tags="uitrusting handboeien pepperspray wapenstok bewapening">
+            <div class="kc-cat">Uitrusting</div>
+            <div class="kc-title">Toegestane uitrusting</div>
+            <div class="kc-text">Op grond van Besluit bewapening en uitrusting: handboeien, wapenstok, pepperspray — uitsluitend met vergunning en training.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════ CHECKLISTS ═══════════════════════ -->
+    <div class="page" id="pg-checklists">
+      <div class="content-header">
+        <button class="back-btn" onclick="goBack()">← Terug</button>
+        <div class="content-page-title">✅ Checklists</div>
+        <div class="content-page-sub">Dagelijkse controles voor je dienst</div>
+      </div>
+      <div class="pill-tabs">
+        <div class="pill active" onclick="setClList('cl-aanvang',this)">🌅 Aanvang</div>
+        <div class="pill" onclick="setClList('cl-einde',this)">🌙 Einde</div>
+        <div class="pill" onclick="setClList('cl-brand',this)">🔥 Brand</div>
+        <div class="pill" onclick="setClList('cl-ronde',this)">🚶 Ronde</div>
+      </div>
+      <div class="content-body" id="clContainer"></div>
+    </div>
+
+    <!-- ═══════════════════════ QUIZ ═══════════════════════ -->
+    <div class="page" id="pg-quiz">
+      <div class="content-header">
+        <button class="back-btn" id="quizBackBtn" onclick="quizBack()">← Terug</button>
+        <div class="content-page-title" id="quizPageTitle">🎯 Quiz</div>
+        <div class="content-page-sub" id="quizPageSub">Test je kennis per categorie</div>
+      </div>
+
+      <!-- CATEGORY PICKER -->
+      <div id="quizCatPicker">
+        <div style="padding:14px 20px 10px;font-size:0.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.8px;">Kies een categorie</div>
+        <div class="quiz-cat-grid">
+          <div class="quiz-cat-card" onclick="startQuiz('wetgeving')" style="border-color:rgba(245,197,24,0.3);">
+            <div class="qcc-icon">⚖️</div>
+            <div class="qcc-title">Wettelijke Kaders</div>
+            <div class="qcc-sub">10 vragen</div>
+            <div class="qcc-score" id="score-wetgeving">Nog niet gedaan</div>
+          </div>
+          <div class="quiz-cat-card" onclick="startQuiz('gebouwen')" style="border-color:rgba(39,110,241,0.3);">
+            <div class="qcc-icon">🏢</div>
+            <div class="qcc-title">Gebouwbeveiliging</div>
+            <div class="qcc-sub">10 vragen</div>
+            <div class="qcc-score" id="score-gebouwen">Nog niet gedaan</div>
+          </div>
+          <div class="quiz-cat-card" onclick="startQuiz('brand')" style="border-color:rgba(225,25,0,0.3);">
+            <div class="qcc-icon">🔥</div>
+            <div class="qcc-title">Brandveiligheid</div>
+            <div class="qcc-sub">10 vragen</div>
+            <div class="qcc-score" id="score-brand">Nog niet gedaan</div>
+          </div>
+          <div class="quiz-cat-card" onclick="startQuiz('mix')" style="border-color:rgba(6,194,112,0.3);">
+            <div class="qcc-icon">🎲</div>
+            <div class="qcc-title">Mix</div>
+            <div class="qcc-sub">10 random vragen</div>
+            <div class="qcc-score" id="score-mix">Nog niet gedaan</div>
+          </div>
+        </div>
+        <div style="padding:0 20px 6px;font-size:0.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:0.8px;">Jouw scores</div>
+        <div id="allScoresWrap" style="padding:0 20px 20px;"></div>
+      </div>
+
+      <!-- QUESTION VIEW -->
+      <div id="quizQuestionView" style="display:none;">
+        <div class="quiz-progress-wrap">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="quiz-qnum" id="quizQNum">Vraag 1 van 10</div>
+            <div class="quiz-qnum" id="quizQScore" style="color:var(--gold);">✓ 0</div>
+          </div>
+          <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quizProgressFill" style="width:0%"></div></div>
+        </div>
+        <div class="quiz-question-wrap">
+          <div class="quiz-question" id="quizQuestion"></div>
+        </div>
+        <div class="quiz-options" id="quizOptions"></div>
+        <div class="quiz-feedback" id="quizFeedback"></div>
+        <button class="quiz-next-btn" id="quizNextBtn" onclick="nextQuestion()">Volgende vraag →</button>
+      </div>
+
+      <!-- RESULT VIEW -->
+      <div id="quizResultView" style="display:none;">
+        <div class="quiz-result-wrap">
+          <div class="quiz-result-icon" id="resultIcon"></div>
+          <div class="quiz-result-score" id="resultScore"></div>
+          <div class="quiz-result-label" id="resultLabel"></div>
+          <div class="quiz-result-sub" id="resultSub"></div>
+          <div class="quiz-result-badge" id="resultBadge"></div>
+          <div style="width:100%;">
+            <button class="quiz-retry-btn" onclick="retryQuiz()">🔄 Opnieuw proberen</button>
+            <button class="quiz-home-btn" onclick="quizToMenu()">Terug naar categorieën</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end scroll-area -->
+
+  <!-- SOS FAB -->
+  <button class="sos-btn" onclick="openSOS()">SOS</button>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="navTo('home')">
+      <div class="nav-icon-wrap">🏠</div>
+      <div class="nav-lbl">Home</div>
+    </button>
+    <button class="nav-btn" onclick="navTo('wetgeving')">
+      <div class="nav-icon-wrap">⚖️</div>
+      <div class="nav-lbl">Wet</div>
+    </button>
+    <button class="nav-btn" onclick="navTo('quiz')">
+      <div class="nav-icon-wrap">🎯</div>
+      <div class="nav-lbl">Quiz</div>
+    </button>
+    <button class="nav-btn" onclick="navTo('brand')">
+      <div class="nav-icon-wrap">🔥</div>
+      <div class="nav-lbl">Brand</div>
+    </button>
+    <button class="nav-btn" onclick="navTo('kennis')">
+      <div class="nav-icon-wrap">📚</div>
+      <div class="nav-lbl">Kennis</div>
+    </button>
+  </nav>
+</div>
+
+<!-- SOS MODAL -->
+<div class="modal-overlay" id="sosModal" onclick="closeSOS(event)">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🆘 Noodgeval</div>
+    <div class="modal-sub">Kies direct de juiste actie</div>
+    <div class="sos-action" onclick="bel('112')">
+      <div class="sos-action-icon">🚒</div>
+      <div><div class="sos-action-title">112 — Brandweer / Ambulance / Politie</div><div class="sos-action-sub">Bij brand, medisch letsel of acute dreiging</div></div>
+    </div>
+    <div class="sos-action" onclick="bel('0900-8844')">
+      <div class="sos-action-icon">👮</div>
+      <div><div class="sos-action-title">0900-8844 — Politie (niet-spoed)</div><div class="sos-action-sub">Voor meldingen die niet acuut zijn</div></div>
+    </div>
+    <div class="sos-action" onclick="showToast('Meldkamer gebeld ✓')">
+      <div class="sos-action-icon">📡</div>
+      <div><div class="sos-action-title">Meldkamer bellen</div><div class="sos-action-sub">Direct contact met je eigen meldkamer</div></div>
+    </div>
+    <div class="sos-action" onclick="navTo('brand');closeSOS();">
+      <div class="sos-action-icon">🔥</div>
+      <div><div class="sos-action-title">Brand — Protocol</div><div class="sos-action-sub">Bekijk evacuatieprocedure</div></div>
+    </div>
+    <button class="modal-close" onclick="closeSOS()">Annuleren</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──
+let currentPage = 'home';
+let history = [];
+const checklists = {
+  'cl-aanvang': {
+    title:'🌅 Aanvang Dienst',
+    items:['Ontvang overdracht van vorige bewaker','Controleer logboek op bijzonderheden','Test portofoon en communicatiemiddelen','Controleer werking toegangscontrolesysteem','Verifieer aanwezigheid sleutels en legitimatie','Controleer nooduitgangen op vrije doorgang','Check camerasystemen op werking','Meld aanvang dienst aan meldkamer']
+  },
+  'cl-einde': {
+    title:'🌙 Einde Dienst',
+    items:['Schrijf bijzonderheden in logboek','Draag lopende zaken over aan volgende bewaker','Maak afsluitende rondegang','Controleer alle toegangspunten vergrendeld','Deactiveer passen van vertrokken bezoekers','Meld einde dienst aan meldkamer','Lever sleutels, middelen en pas in']
+  },
+  'cl-brand': {
+    title:'🔥 Brandveiligheid Dagelijks',
+    items:['Controleer rookmelders en brandmeldcentrale','Verifieer noodverlichting functioneel','Check blusapparatuur (druk ok, geen schade)','Vluchtroutes vrij van obstakels','Nooduitgangen vrij en open van binnenuit','Branddeuren gaan automatisch dicht bij alarm','Gevaarlijke stoffen veilig opgeslagen','Verzamelpunt kenbaar en bereikbaar']
+  },
+  'cl-ronde': {
+    title:'🚶 Rondegang Controle',
+    items:['Controleer alle toegangspunten','Scan parkeerterrein en buitengebied','Check ramen op openstaand/beschadiging','Verifieer verlichting buiten- en binnengebied','Inspecteer nooduitgangen','Scan technische ruimtes op afwijkingen','Registreer checkpoint / QR-code scan','Log bevindingen in logboek']
+  }
+};
+let activeCL = 'cl-aanvang';
+
+// ── NAVIGATIE ──
+function navTo(page) {
+  if (page === currentPage) return;
+  history.push(currentPage);
+  currentPage = page;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('pg-' + page).classList.add('active');
+  document.getElementById('scrollArea').scrollTop = 0;
+  const navMap = {home:0,wetgeving:1,quiz:2,brand:3,kennis:4};
+  if (navMap[page] !== undefined) {
+    document.querySelectorAll('.nav-btn')[navMap[page]].classList.add('active');
+  }
+  if (page === 'checklists') renderChecklist(activeCL);
+}
+
+function goBack() {
+  const prev = history.pop() || 'home';
+  currentPage = null;
+  navTo(prev);
+}
+
+// ── PILL TABS ──
+function setPill(el, contentId) {
+  const parent = el.closest('.pill-tabs');
+  parent.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  // Hide all sibling content bodies
+  const page = el.closest('.page');
+  page.querySelectorAll('.content-body').forEach(cb => cb.style.display = 'none');
+  document.getElementById(contentId).style.display = 'block';
+}
+
+// ── ACCORDION ──
+function toggleCard(header) {
+  const body = header.nextElementSibling;
+  const chevron = header.querySelector('.ic-chevron');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  chevron.classList.toggle('open', !isOpen);
+}
+
+// ── KENNISBANK FILTER ──
+let activeCat = 'alle';
+function filterKennis(q) {
+  const query = q.toLowerCase();
+  document.querySelectorAll('.kennis-card').forEach(card => {
+    const cat = card.getAttribute('data-cat') || '';
+    const tags = card.getAttribute('data-tags') || '';
+    const title = card.querySelector('.kc-title').textContent.toLowerCase();
+    const text = card.querySelector('.kc-text').textContent.toLowerCase();
+    const catOk = activeCat === 'alle' || cat === activeCat;
+    const qOk = !query || tags.includes(query) || title.includes(query) || text.includes(query);
+    card.style.display = (catOk && qOk) ? '' : 'none';
+  });
+}
+function filterCat(el, cat) {
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  activeCat = cat;
+  filterKennis(document.getElementById('kennisSearch').value);
+}
+
+// ── CHECKLISTS ──
+function renderChecklist(id) {
+  const cl = checklists[id];
+  const saved = JSON.parse(localStorage.getItem(id) || '{}');
+  const done = Object.values(saved).filter(Boolean).length;
+  const total = cl.items.length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  document.getElementById('clContainer').innerHTML = `
+    <div style="margin-bottom:6px;">
+      <div style="font-size:1rem;font-weight:800;margin-bottom:10px;">${cl.title}</div>
+      <div class="cl-progress-label">${done} / ${total} voltooid</div>
+      <div class="cl-progress"><div class="cl-progress-fill" style="width:${pct}%"></div></div>
+    </div>
+    ${cl.items.map((item,i) => `
+      <div class="cl-item">
+        <div class="cl-check ${saved[i]?'done':''}" onclick="toggleCL('${id}',${i},this)">
+          ${saved[i]?'✓':''}
+        </div>
+        <div class="cl-label ${saved[i]?'done':''}">${item}</div>
+      </div>
+    `).join('')}
+    <button onclick="resetCL('${id}')" style="margin-top:16px;width:100%;padding:12px;background:var(--dark3);border:1px solid var(--border);color:var(--muted);border-radius:var(--radius-sm);font-size:0.82rem;font-weight:700;cursor:pointer;font-family:inherit;">Opnieuw beginnen</button>
+  `;
+}
+function toggleCL(listId, index, el) {
+  const saved = JSON.parse(localStorage.getItem(listId) || '{}');
+  saved[index] = !saved[index];
+  localStorage.setItem(listId, JSON.stringify(saved));
+  renderChecklist(listId);
+}
+function resetCL(id) {
+  localStorage.removeItem(id);
+  renderChecklist(id);
+  showToast('Checklist gereset');
+}
+function setClList(id, el) {
+  activeCL = id;
+  el.closest('.pill-tabs').querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  renderChecklist(id);
+}
+
+// ── SOS MODAL ──
+function openSOS() {
+  document.getElementById('sosModal').classList.add('open');
+}
+function closeSOS(e) {
+  if (!e || e.target === document.getElementById('sosModal')) {
+    document.getElementById('sosModal').classList.remove('open');
+  }
+}
+function bel(num) {
+  showToast('Bellen: ' + num);
+  closeSOS();
+}
+
+// ── TOAST ──
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── INIT ──
+renderChecklist('cl-aanvang');
+
+// ── QUIZ DATA ──
+const quizData = {
+  wetgeving: [
+    {
+      q: "Welke wet regelt de vergunningsplicht voor particuliere beveiligingsorganisaties?",
+      opts: ["Politiewet 2012","Wpbr 1997","Arbowet","Wetboek van Strafrecht"],
+      correct: 1,
+      explain: "De Wet particuliere beveiligingsorganisaties en recherchebureaus (Wpbr) uit 1997 regelt de vergunningsplicht, gedragsregels en het toezicht op beveiligingsorganisaties."
+    },
+    {
+      q: "Welk artikel geeft een burger (en dus bewaker) het recht om iemand op heterdaad aan te houden?",
+      opts: ["Art. 41 Sr","Art. 53 Sv","Art. 7 Wpbr","Art. 15 Arbowet"],
+      correct: 1,
+      explain: "Artikel 53 van het Wetboek van Strafvordering geeft burgers het recht op aanhouding bij ontdekking op heterdaad van een misdrijf. De aangehoudene moet onmiddellijk worden overgedragen aan de politie."
+    },
+    {
+      q: "Wat is noodweer (art. 41 Sr)?",
+      opts: ["Het recht om altijd geweld te gebruiken","Zelfverdediging bij ogenblikkelijke wederrechtelijke aanranding","Het mogen aanroepen van de politie","Aanhouding zonder bewijs"],
+      correct: 1,
+      explain: "Noodweer (art. 41 Sr) rechtvaardigt geweld ter verdediging bij een ogenblikkelijke wederrechtelijke aanranding. De reactie moet proportioneel zijn aan het gevaar."
+    },
+    {
+      q: "Mag een particuliere beveiliger een kopie maken van het ID-bewijs van een bezoeker?",
+      opts: ["Ja, altijd","Ja, maar alleen met toestemming","Nee, dit is verboden op grond van de AVG","Alleen bij verdachte personen"],
+      correct: 2,
+      explain: "Op grond van de AVG is het verboden voor particuliere partijen om een kopie van een ID-bewijs te maken. Ook het BSN-nummer mag nooit worden geregistreerd."
+    },
+    {
+      q: "Hoe lang mogen camerabeelden maximaal worden bewaard volgens de AVG?",
+      opts: ["1 week","4 weken","3 maanden","1 jaar"],
+      correct: 1,
+      explain: "Camerabeelden mogen maximaal 4 weken worden bewaard. Als er een incident op te zien is, mogen de beelden langer worden bewaard als bewijsmateriaal."
+    },
+    {
+      q: "Wat is de minimumleeftijd voor een particuliere beveiliger in Nederland?",
+      opts: ["16 jaar","17 jaar","18 jaar","21 jaar"],
+      correct: 2,
+      explain: "Volgens de Wpbr is de minimumleeftijd voor beveiligingspersoneel 18 jaar."
+    },
+    {
+      q: "Welk document moet een bewaker altijd tijdens dienst bij zich dragen?",
+      opts: ["Paspoort","Beveiligingspas (legitimatiebewijs)","VOG","Arbeidscontract"],
+      correct: 1,
+      explain: "Artikel 9 Wpbr verplicht elke bewaker een geldig legitimatiebewijs (beveiligingspas) bij zich te dragen tijdens de dienst. Hiop staat naam, foto, werkgever en geldigheidsperiode."
+    },
+    {
+      q: "Een bewaker ziet iemand een telefoon stelen en rent de winkel uit. Wat mag de bewaker doen?",
+      opts: ["Niets, alleen de politie bellen","De verdachte vasthouden (aanhouding op heterdaad) en wachten op politie","Geweld gebruiken om het voorwerp terug te krijgen","De verdachte slaan"],
+      correct: 1,
+      explain: "Bij heterdaad van een misdrijf mag de bewaker als burger de verdachte aanhouden (art. 53 Sv). De verdachte moet zo snel mogelijk worden overgedragen aan de politie."
+    },
+    {
+      q: "Welk BSN-nummer mag een bewaker registreren van een bezoeker?",
+      opts: ["Altijd","Alleen bij verdenking","Nooit","Alleen met toestemming"],
+      correct: 2,
+      explain: "Het BSN (Burgerservicenummer) mag uitsluitend worden verwerkt door de overheid of werkgever voor salarisadministratie. Een bewaker mag dit nooit registreren van bezoekers."
+    },
+    {
+      q: "Welke uitrusting mag een bewaker dragen met de juiste vergunning?",
+      opts: ["Pistool en wapenstok","Handboeien, wapenstok en pepperspray","Alleen handboeien","Pepperspray en pistool"],
+      correct: 1,
+      explain: "Op grond van het Besluit bewapening en uitrusting mogen bewakers met de juiste vergunning en opleiding handboeien, wapenstok en pepperspray dragen. Vuurwapens zijn in principe niet toegestaan."
+    }
+  ],
+  gebouwen: [
+    {
+      q: "Wat is het eerste dat je doet bij het ontdekken van een inbreker in het gebouw?",
+      opts: ["Zelf achtervolgen","Meldkamer en politie (112) inschakelen","Luid roepen","Alleen observeren en niets doen"],
+      correct: 1,
+      explain: "Veiligheid staat voorop. Nooit zelf een confrontatie aangaan. Direct de meldkamer en/of politie (112) inschakelen en observeer vanuit een veilige positie."
+    },
+    {
+      q: "Wat is het doel van een onvoorspelbare rondegang?",
+      opts: ["Meer stappen lopen","Voorkomen dat kwaadwillenden patroon voorspellen","Energie besparen","Camera's uitschakelen"],
+      correct: 1,
+      explain: "Door rondegangen op wisselende tijden en routes uit te voeren, is het voor kwaadwillenden moeilijker om patronen te herkennen en misbruik te maken van vaste momenten."
+    },
+    {
+      q: "Een bezoeker wil zijn ID niet laten zien bij de receptie. Wat doe je?",
+      opts: ["Hem toch binnenlaten","Toegang weigeren en leidinggevende inlichten","Hem zelf fouilleren","Bel direct 112"],
+      correct: 1,
+      explain: "Als een bezoeker zijn identiteit niet wil tonen, mag je de toegang weigeren. Informeer je leidinggevende en registreer het incident in het logboek."
+    },
+    {
+      q: "Hoe lang mogen camerabeelden standaard worden bewaard?",
+      opts: ["1 week","4 weken","3 maanden","1 jaar"],
+      correct: 1,
+      explain: "Camerabeelden zijn persoonsgegevens (AVG). De standaard bewaartermijn is maximaal 4 weken, tenzij de beelden als bewijsmateriaal nodig zijn."
+    },
+    {
+      q: "Wat doe je als een nooduitgang geblokkeerd is door kratten?",
+      opts: ["Meldt dit pas aan het einde van de dienst","Ruim dit onmiddellijk op en meld het in het logboek","Negeer het als er geen brand is","Zet een bordje erbij"],
+      correct: 1,
+      explain: "Nooduitgangen moeten altijd vrij en bereikbaar zijn. Ruim obstakels direct op, documenteer het in het logboek en informeer de verantwoordelijke."
+    },
+    {
+      q: "Welke informatie leg je ALTIJD vast bij een bezoeker?",
+      opts: ["BSN-nummer en adres","Naam, bedrijf, doel bezoek en tijdstip","Alleen naam","Kopie ID-bewijs"],
+      correct: 1,
+      explain: "Bij een bezoekersregistratie leg je naam, bedrijf, doel van het bezoek en tijdstip van aankomst en vertrek vast. Een kopie van het ID of het BSN mag niet worden geregistreerd."
+    },
+    {
+      q: "Wat is stap 5 in het incidentmanagement stappenplan?",
+      opts: ["Melden","Afzetten","Registreren","Nazorg"],
+      correct: 2,
+      explain: "Stap 5 is Registreren: een schriftelijk rapport met tijdstip, beschrijving van het incident, betrokken personen en genomen maatregelen."
+    },
+    {
+      q: "Wat is een 'dode man schakelaar' bij nachtbeveiliging?",
+      opts: ["Een alarm bij overlijden bewaker","Een systeem dat regelmatig bevestiging van de bewaker vereist","Een noodknop bij de ingang","Een uitschakelaar voor het alarm"],
+      correct: 1,
+      explain: "Een dode man schakelaar is een systeem waarbij de bewaker regelmatig (bijv. elke 15-30 min) een signaal moet bevestigen. Doet hij dat niet, dan slaat de meldkamer alarm."
+    },
+    {
+      q: "Wat mag je NIET van een bezoeker registreren?",
+      opts: ["Naam","Tijdstip aankomst","BSN-nummer","Bedrijfsnaam"],
+      correct: 2,
+      explain: "Het BSN is een bijzonder persoonsgegeven dat uitsluitend door de overheid en werkgevers mag worden verwerkt. Een bewaker mag dit nooit registreren van bezoekers."
+    },
+    {
+      q: "Bij welke situatie bel je ALTIJD 112?",
+      opts: ["Wanneer een bezoeker te laat komt","Bij dreiging, geweld of acuut gevaar","Als de lift kapot is","Als een bezoekersbadge niet werkt"],
+      correct: 1,
+      explain: "Bij elke situatie met dreiging, geweld of acuut gevaar bel je direct 112. Veiligheid van mensen gaat altijd voor. Probeer dergelijke situaties nooit zelf op te lossen."
+    }
+  ],
+  brand: [
+    {
+      q: "Wat is het eerste dat je doet bij het ontdekken van een brand?",
+      opts: ["Zelf blussen","Alarm activeren en 112 bellen","Collega's waarschuwen en koffie pakken","Ramen openen"],
+      correct: 1,
+      explain: "Bij brand activeer je direct het brandalarm en bel je 112. Geef je locatie, de aard van de brand en het aantal aanwezige personen door."
+    },
+    {
+      q: "Wat betekent PASS bij het gebruik van een brandblusser?",
+      opts: ["Pauze, Aanvallen, Spuiten, Stoppen","Pin eruit, Aim (richten), Squeeze (indrukken), Sweep (zwaaien)","Personeel, Alarm, Snel, Stoppen","Pas op, Alarm, Stop, Spuit"],
+      correct: 1,
+      explain: "PASS staat voor: Pin eruit (veiligheidssluiting verwijderen), Aim (richten op de basis van de brand), Squeeze (hendel indrukken), Sweep (van links naar rechts zwaaien)."
+    },
+    {
+      q: "Welk type brandblusser gebruik je bij een brand in een serverruimte?",
+      opts: ["Water","Schuim","CO₂ (koolzuur)","Poeder"],
+      correct: 2,
+      explain: "CO₂ blusser is geschikt voor elektrische branden en serverruimtes. Water en schuim mogen nooit bij elektrische apparatuur worden gebruikt. Poeder beschadigt gevoelige apparatuur."
+    },
+    {
+      q: "Hoe lang moet de noodverlichting minimaal autonoom werken?",
+      opts: ["15 minuten","30 minuten","1 uur","4 uur"],
+      correct: 2,
+      explain: "Volgens het Bouwbesluit 2012 moet noodverlichting op vluchtroutes minimaal 1 uur autonoom werken bij uitval van de stroomvoorziening."
+    },
+    {
+      q: "Welke wet verplicht werkgevers om BHV te organiseren?",
+      opts: ["Bouwbesluit 2012","Wpbr 1997","Arbowet art. 15","Politiewet 2012"],
+      correct: 2,
+      explain: "Artikel 15 van de Arbowet verplicht elke werkgever om bedrijfshulpverlening (BHV) te organiseren. BHV'ers moeten EHBO en brandbestrijding kunnen uitvoeren en mensen kunnen ontruimen."
+    },
+    {
+      q: "Mag je de lift gebruiken bij brand?",
+      opts: ["Ja, als je haast hebt","Ja, alleen bij kleine brand","Nee, nooit","Alleen in hoge gebouwen"],
+      correct: 2,
+      explain: "Gebruik nooit de lift bij brand. Bij stroomuitval of brand kan de lift stilvallen. Gebruik altijd de trappen en sluit deuren achter je om brandverspreiding te vertragen."
+    },
+    {
+      q: "Wat is de maximale vluchtafstand in een kantoor volgens het Bouwbesluit 2012?",
+      opts: ["15 meter","30 meter","45 meter","60 meter"],
+      correct: 1,
+      explain: "In een kantoor mag de maximale vluchtafstand tot een veilige plek 30 meter zijn. In industriële gebouwen geldt een maximum van 45 meter."
+    },
+    {
+      q: "Welke brandblusser gebruik je bij een vloeistofbrand (bijv. benzine)?",
+      opts: ["Water","CO₂","Schuim","Geen van alle"],
+      correct: 2,
+      explain: "Schuim is geschikt voor vloeistofbranden zoals benzine en olie. Water mag nooit worden gebruikt bij vloeistofbranden, omdat dit de brand kan verspreiden."
+    },
+    {
+      q: "Hoe breed moet een vluchtroute minimaal zijn voor meer dan 60 personen?",
+      opts: ["0,85 meter","1,0 meter","1,2 meter","1,5 meter"],
+      correct: 2,
+      explain: "Voor meer dan 60 personen geldt een minimale breedte van 1,2 meter voor vluchtroutes. Voor 60 personen of minder is de minimale breedte 0,85 meter."
+    },
+    {
+      q: "Wat doe je met deuren tijdens evacuatie bij brand?",
+      opts: ["Open laten staan voor vluchtelingen","Sluiten achter je — vertraagt brandverspreiding","Vergrendelen met sleutel","Verwijderen van de scharnieren"],
+      correct: 1,
+      explain: "Sluit altijd deuren achter je bij evacuatie. Gesloten deuren vertragen de verspreiding van brand en rook aanzienlijk, wat levens kan redden."
+    }
+  ]
+};
+
+// Mix: 10 random vragen uit alle categorieën
+function buildMix() {
+  const all = [];
+  ['wetgeving','gebouwen','brand'].forEach(cat => {
+    quizData[cat].forEach(q => all.push({...q, _cat: cat}));
+  });
+  const shuffled = all.sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, 10);
+}
+
+// ── QUIZ STATE ──
+let quizState = {
+  cat: null,
+  questions: [],
+  current: 0,
+  score: 0,
+  answered: false
+};
+
+function startQuiz(cat) {
+  quizState.cat = cat;
+  quizState.questions = cat === 'mix' ? buildMix() : [...quizData[cat]].sort(() => Math.random() - 0.5);
+  quizState.current = 0;
+  quizState.score = 0;
+  quizState.answered = false;
+
+  document.getElementById('quizCatPicker').style.display = 'none';
+  document.getElementById('quizResultView').style.display = 'none';
+  document.getElementById('quizQuestionView').style.display = 'block';
+  document.getElementById('quizPageTitle').textContent = {wetgeving:'⚖️ Wetgeving Quiz',gebouwen:'🏢 Gebouwbeveiliging Quiz',brand:'🔥 Brandveiligheid Quiz',mix:'🎲 Mix Quiz'}[cat];
+  document.getElementById('quizPageSub').textContent = '10 vragen — kies het juiste antwoord';
+  document.getElementById('quizBackBtn').onclick = () => { quizToMenu(); };
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = quizState.questions[quizState.current];
+  const total = quizState.questions.length;
+  const idx = quizState.current;
+  quizState.answered = false;
+
+  document.getElementById('quizQNum').textContent = `Vraag ${idx+1} van ${total}`;
+  document.getElementById('quizQScore').textContent = `✓ ${quizState.score}`;
+  document.getElementById('quizProgressFill').style.width = `${(idx/total)*100}%`;
+  document.getElementById('quizQuestion').textContent = q.q;
+  document.getElementById('quizFeedback').className = 'quiz-feedback';
+  document.getElementById('quizFeedback').innerHTML = '';
+  document.getElementById('quizNextBtn').className = 'quiz-next-btn';
+
+  const letters = ['A','B','C','D'];
+  document.getElementById('quizOptions').innerHTML = q.opts.map((opt, i) => `
+    <button class="quiz-option" onclick="selectOption(${i})">
+      <div class="quiz-opt-letter">${letters[i]}</div>
+      ${opt}
+    </button>
+  `).join('');
+}
+
+function selectOption(idx) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+
+  const q = quizState.questions[quizState.current];
+  const opts = document.querySelectorAll('.quiz-option');
+  const fb = document.getElementById('quizFeedback');
+  const nextBtn = document.getElementById('quizNextBtn');
+  const isLast = quizState.current === quizState.questions.length - 1;
+
+  opts.forEach(o => o.classList.add('disabled'));
+
+  if (idx === q.correct) {
+    quizState.score++;
+    opts[idx].classList.add('correct');
+    document.getElementById('quizQScore').textContent = `✓ ${quizState.score}`;
+    fb.className = 'quiz-feedback correct-fb show';
+    fb.innerHTML = `<strong>✓ Correct!</strong> ${q.explain}`;
+  } else {
+    opts[idx].classList.add('wrong');
+    opts[q.correct].classList.add('show-correct');
+    fb.className = 'quiz-feedback wrong-fb show';
+    fb.innerHTML = `<strong>✗ Fout.</strong> Het juiste antwoord is: <strong>${q.opts[q.correct]}</strong>. ${q.explain}`;
+  }
+
+  nextBtn.className = 'quiz-next-btn show';
+  nextBtn.textContent = isLast ? 'Bekijk resultaat →' : 'Volgende vraag →';
+}
+
+function nextQuestion() {
+  const total = quizState.questions.length;
+  if (quizState.current < total - 1) {
+    quizState.current++;
+    renderQuestion();
+    document.getElementById('scrollArea').scrollTop = 0;
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  const score = quizState.score;
+  const total = quizState.questions.length;
+  const pct = Math.round(score/total*100);
+
+  document.getElementById('quizQuestionView').style.display = 'none';
+  document.getElementById('quizResultView').style.display = 'block';
+  document.getElementById('quizProgressFill').style.width = '100%';
+  document.getElementById('quizPageSub').textContent = 'Quiz voltooid!';
+
+  let icon, label, sub, badgeClass, badgeText;
+  if (pct >= 90) {
+    icon = '🏆'; label = 'Uitstekend!'; sub = 'Je beheerst de stof perfect. Goed bezig, professional!';
+    badgeClass = 'badge-gold'; badgeText = '🥇 Goud';
+  } else if (pct >= 70) {
+    icon = '🎉'; label = 'Goed gedaan!'; sub = 'Bijna perfect. Herhaal de gemiste vragen om 100% te halen.';
+    badgeClass = 'badge-silver'; badgeText = '🥈 Zilver';
+  } else if (pct >= 50) {
+    icon = '👍'; label = 'Voldoende!'; sub = 'Je hebt de basis. Bestudeer de modules opnieuw voor een hogere score.';
+    badgeClass = 'badge-bronze'; badgeText = '🥉 Brons';
+  } else {
+    icon = '📚'; label = 'Meer oefening nodig'; sub = 'Bestudeer de modules grondig en probeer het opnieuw. Je kan het!';
+    badgeClass = 'badge-bronze'; badgeText = '💪 Blijf oefenen';
+  }
+
+  document.getElementById('resultIcon').textContent = icon;
+  document.getElementById('resultScore').textContent = `${score}/${total}`;
+  document.getElementById('resultLabel').textContent = label;
+  document.getElementById('resultSub').textContent = sub;
+  document.getElementById('resultBadge').className = `quiz-result-badge ${badgeClass}`;
+  document.getElementById('resultBadge').textContent = badgeText;
+
+  // Save score
+  const savedScores = JSON.parse(localStorage.getItem('quizScores') || '{}');
+  const key = quizState.cat;
+  if (!savedScores[key] || pct > savedScores[key]) {
+    savedScores[key] = pct;
+    localStorage.setItem('quizScores', JSON.stringify(savedScores));
+  }
+  updateScoreDisplay();
+  document.getElementById('scrollArea').scrollTop = 0;
+}
+
+function retryQuiz() {
+  startQuiz(quizState.cat);
+}
+
+function quizToMenu() {
+  document.getElementById('quizQuestionView').style.display = 'none';
+  document.getElementById('quizResultView').style.display = 'none';
+  document.getElementById('quizCatPicker').style.display = 'block';
+  document.getElementById('quizPageTitle').textContent = '🎯 Quiz';
+  document.getElementById('quizPageSub').textContent = 'Test je kennis per categorie';
+  document.getElementById('quizBackBtn').onclick = () => goBack();
+  updateScoreDisplay();
+  document.getElementById('scrollArea').scrollTop = 0;
+}
+
+function quizBack() {
+  if (document.getElementById('quizCatPicker').style.display !== 'none') {
+    goBack();
+  } else {
+    quizToMenu();
+  }
+}
+
+function updateScoreDisplay() {
+  const savedScores = JSON.parse(localStorage.getItem('quizScores') || '{}');
+  const cats = ['wetgeving','gebouwen','brand','mix'];
+  cats.forEach(cat => {
+    const el = document.getElementById('score-' + cat);
+    if (el) {
+      el.textContent = savedScores[cat] !== undefined ? `Beste: ${savedScores[cat]}%` : 'Nog niet gedaan';
+    }
+  });
+
+  // All scores summary
+  const wrap = document.getElementById('allScoresWrap');
+  if (wrap) {
+    const labels = {wetgeving:'⚖️ Wetgeving',gebouwen:'🏢 Gebouwen',brand:'🔥 Brand',mix:'🎲 Mix'};
+    const hasAny = cats.some(c => savedScores[c] !== undefined);
+    if (!hasAny) {
+      wrap.innerHTML = '<div style="font-size:0.83rem;color:var(--muted);padding:8px 0;">Nog geen quizzen voltooid. Start een categorie om je score bij te houden!</div>';
+    } else {
+      wrap.innerHTML = cats.filter(c => savedScores[c] !== undefined).map(c => {
+        const pct = savedScores[c];
+        const color = pct >= 90 ? 'var(--gold)' : pct >= 70 ? 'var(--green)' : pct >= 50 ? 'var(--orange)' : 'var(--red)';
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+          <span style="font-size:0.85rem;">${labels[c]}</span>
+          <span style="font-size:0.85rem;font-weight:800;color:${color};">${pct}%</span>
+        </div>`;
+      }).join('');
+    }
+  }
+}
+
+updateScoreDisplay();
+</script>
+</body>
+</html>
