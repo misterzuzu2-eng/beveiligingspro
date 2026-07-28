@@ -851,6 +851,8 @@ td{padding:8px 10px;border-top:1px solid var(--border);}
         <div class="pill" onclick="switchTab('brand','installaties')">Installaties</div>
         <div class="pill" onclick="switchTab('brand','ontruiming')">Ontruiming</div>
         <div class="pill" onclick="switchTab('brand','gebouwtypen')">Gebouwtypen</div>
+        <div class="pill" onclick="switchTab('brand','bmi')">Brandmeldinstallatie</div>
+        <div class="pill" onclick="switchTab('brand','bhv')">BHV & EHBO</div>
       </div>
 
       <div class="sub-content active" id="brand-wetbrand" style="padding:0 20px;">
@@ -1372,6 +1374,366 @@ td{padding:8px 10px;border-top:1px solid var(--border);}
         </div>
       </div>
     </div>
+
+      <!-- BRANDMELDINSTALLATIE TAB -->
+      <div class="sub-content" id="brand-bmi" style="padding:0 20px;">
+        <div class="card">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-head-left"><span class="card-icon">🔴</span><div><div class="card-title">Wat is een brandmeldinstallatie (BMI)?</div><div class="card-sub">Systeem, doel en werking</div></div></div>
+            <span class="card-chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <p>Een brandmeldinstallatie (BMI) is een elektronisch systeem dat brand automatisch detecteert, een alarm activeert en de brand doormeldt naar een meldkamer of brandweer. De eisen zijn vastgelegd in <strong>NEN 2535:2024</strong>.</p>
+            <h4>Componenten van een BMI</h4>
+            <ul>
+              <li><strong>Brandmeldcentrale (BMC):</strong> het brein van het systeem — ontvangt alle signalen, beheert zones, stuurt alarmering aan</li>
+              <li><strong>Rookmelders (optisch):</strong> detecteren rookdeeltjes via lichtverstrooiing — ideaal voor smeulende branden</li>
+              <li><strong>Rookmelders (ionisch):</strong> detecteren kleine verbrandingsdeeltjes — snel bij open vlammen</li>
+              <li><strong>Hittermelders:</strong> reageren op temperatuurstijging — geschikt voor keukens, garages (minder valse alarmen)</li>
+              <li><strong>Multisensormelders:</strong> combinatie rook + hitte + CO — meest betrouwbaar, minste valse alarmen</li>
+              <li><strong>Handmeldpunten (HMP):</strong> rode kastjes op vluchtroutes — handmatig alarm slaan</li>
+              <li><strong>Sirenes en strobes:</strong> akoestisch (minimaal 65 dB) en visueel alarm</li>
+              <li><strong>Doormelding (AMS):</strong> automatische koppeling naar particuliere alarmcentrale (PAC) of brandweer</li>
+            </ul>
+            <h4>Bewakingscategorieën (NEN 2535)</h4>
+            <div class="table-wrap"><table>
+              <tr><th>Categorie</th><th>Omschrijving</th><th>Typisch gebruik</th></tr>
+              <tr><td>BM0</td><td>Geen automatische detectie, alleen HMP</td><td>Kleine kantoren</td></tr>
+              <tr><td>BM1</td><td>Gedeeltelijke bewaking (vluchtroutes)</td><td>Scholen, winkels</td></tr>
+              <tr><td>BM2</td><td>Volledige gebouwbewaking</td><td>Kantoren, hotels</td></tr>
+              <tr><td>BM3</td><td>Extra hoge gevoeligheid</td><td>Datacenters, musea, archieven</td></tr>
+            </table></div>
+            <span class="tag gold">NEN 2535:2024</span><span class="tag gold">EN 54-serie</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-head-left"><span class="card-icon">📡</span><div><div class="card-title">Typen detectoren in detail</div><div class="card-sub">Keuze afhankelijk van ruimte en risico</div></div></div>
+            <span class="card-chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <div class="table-wrap"><table>
+              <tr><th>Type</th><th>Detecteert</th><th>Geschikt voor</th><th>Niet geschikt voor</th></tr>
+              <tr><td>Optische rookmelder</td><td>Zichtbare rook (grote deeltjes)</td><td>Woonruimten, kantoren, slaapkamers</td><td>Keukens (stoom/kookdampen)</td></tr>
+              <tr><td>Ionische rookmelder</td><td>Onzichtbare verbrandingsdeeltjes</td><td>Snel brandende materialen</td><td>Stofrijke omgevingen</td></tr>
+              <tr><td>Hittemelder (statisch)</td><td>Vaste temperatuur (bijv. 58°C)</td><td>Keukens, garages, zolders</td><td>Ruimten met langzame branden</td></tr>
+              <tr><td>Hittemelder (differentieel)</td><td>Snelle temperatuurstijging</td><td>Ruimten met plotse branden</td><td>Industriële hitte-omgevingen</td></tr>
+              <tr><td>CO melder</td><td>Koolmonoxide (CO)</td><td>Garages, stookruimten</td><td>Niet als vervanging rookmelder</td></tr>
+              <tr><td>Lineaire rookmelder (straal)</td><td>Rook over grote afstand</td><td>Magazijnen, hallen, kerken</td><td>Kleine ruimten</td></tr>
+              <tr><td>Aspiratierookmelder (ASD)</td><td>Microscopische rookdeeltjes</td><td>Serverruimten, cleanrooms</td><td>Stofrijke omgevingen</td></tr>
+              <tr><td>Vlammelder</td><td>UV/IR straling van vlammen</td><td>Industrie, hangars</td><td>Ruimten met sterk omgevingslicht</td></tr>
+            </table></div>
+            <div class="info-box orange">Aspiratierookmelders (ASD) detecteren brand al in een zeer vroeg stadium — bij datacenters activeren ze al bij 0,01% obs/m rookconcentratie.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-head-left"><span class="card-icon">🔧</span><div><div class="card-title">Onderhoud en inspectie BMI</div><div class="card-sub">Wettelijke eisen en praktische aanpak</div></div></div>
+            <span class="card-chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <h4>Onderhoudsverplichting (NEN 2535)</h4>
+            <div class="table-wrap"><table>
+              <tr><th>Frequentie</th><th>Wie</th><th>Wat</th></tr>
+              <tr><td>Dagelijks</td><td>Gebruiker / beveiliger</td><td>Visuele check BMC — geen storingen / fouten op display</td></tr>
+              <tr><td>Maandelijks</td><td>Gebruiker / beveiliger</td><td>Test 1 handmeldpunt per zone, controleer logboek</td></tr>
+              <tr><td>Kwartaal</td><td>Gebruiker / technician</td><td>Test van een deel van de automatische melders per zone</td></tr>
+              <tr><td>Jaarlijks</td><td>Gecertificeerd onderhoudsbedrijf</td><td>Volledig onderhoud, test alle componenten, reiniging melders</td></tr>
+            </table></div>
+            <h4>Logboekplicht</h4>
+            <p>Elke test, storing, vals alarm en interventie moet worden bijgehouden in het <strong>BMI-logboek</strong>. Dit is verplicht bij inspectie door gemeente of brandweer en bij BORG-audits.</p>
+            <h4>Wat registreer je als beveiliger?</h4>
+            <ul>
+              <li>Tijdstip en zone van elke melding</li>
+              <li>Reden van alarm (echt, vals of test)</li>
+              <li>Genomen actie (onderzoek, ontruiming, 112 gebeld)</li>
+              <li>Wie aanwezig was (BHV, brandweer)</li>
+              <li>Herstel van het systeem na alarm</li>
+            </ul>
+            <div class="info-box red">Een onbeantwoord brandmeldalarm nooit negeren. Zelfs als het waarschijnlijk vals is — altijd onderzoeken. Bij twijfel: ontruimen en 112 bellen.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-head-left"><span class="card-icon">🚨</span><div><div class="card-title">Procedure bij brandmelding</div><div class="card-sub">Stap-voor-stap protocol voor beveiliger</div></div></div>
+            <span class="card-chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <h4>Bij activering BMI alarm</h4>
+            <ul>
+              <li><strong>Stap 1:</strong> Noteer tijdstip en welke zone/melder heeft geactiveerd (staat op BMC-display)</li>
+              <li><strong>Stap 2:</strong> Ga naar de geactiveerde zone — neem portofoon en blusser mee</li>
+              <li><strong>Stap 3:</strong> Onderzoek op brand, rook of andere oorzaak</li>
+              <li><strong>Stap 4a — Echte brand:</strong> Activeer ontruimingsalarm, bel 112, start ontruiming conform plan</li>
+              <li><strong>Stap 4b — Vals alarm:</strong> Reset de melder via BMC, noteer oorzaak in logboek</li>
+              <li><strong>Stap 5:</strong> Informeer meldkamer over uitkomst</li>
+            </ul>
+            <h4>Vals alarm voorkomen</h4>
+            <ul>
+              <li>Stoom van koken → hittemelder of wisselmelder gebruiken i.p.v. rookmelder</li>
+              <li>Stof bij verbouw → tijdelijk afschermen of stofkap op melder</li>
+              <li>Insecten in melder → jaarlijks reinigen in onderhoud</li>
+              <li>Rook van buiten (bijv. BBQ) → check luchtinlaat posities</li>
+            </ul>
+            <div class="info-box">Na 3 valse alarmen per jaar kan de politie/brandweer besluiten niet meer automatisch te reageren. Kosten van onterechte uitrukken worden bij de eigenaar in rekening gebracht.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-head-left"><span class="card-icon">📟</span><div><div class="card-title">Doormelding naar meldkamer</div><div class="card-sub">PAC, brandweer en AMS-koppeling</div></div></div>
+            <span class="card-chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <p>Bij bewakingscategorie BM2 en BM3 is een automatische doormelding (AMS) verplicht. Dit houdt in dat het alarm automatisch wordt doorgegeven aan een Particuliere Alarmcentrale (PAC) of rechtstreeks aan de brandweer.</p>
+            <h4>Werking doormelding</h4>
+            <ul>
+              <li>BMC detecteert brand → seint via IP of PSTN (telefoonlijn als backup) naar PAC</li>
+              <li>PAC verifieert alarm via camera of terugbelpoging</li>
+              <li>Bij bevestiging: PAC stuurt surveillancewagen en/of brandweer</li>
+              <li>Responstijd PAC bij AMS: norm is &lt;5 minuten voor eerste verificatie</li>
+            </ul>
+            <h4>Eisen doormeldsysteem (Bbl + NEN 2535)</h4>
+            <ul>
+              <li>Dubbele communicatieweg verplicht (IP + PSTN of IP + 4G)</li>
+              <li>AES 128-bit versleuteling van het signaal</li>
+              <li>24/7 bewaking vanuit de PAC</li>
+              <li>Maandelijkse testmelding verplicht</li>
+            </ul>
+            <span class="tag gold">NEN 2535 §7</span><span class="tag blue">BORG eis doormelding</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BHV & EHBO TAB -->
+      <div class="sub-content" id="brand-bhv" style="padding:0 20px;">
+        <div class="card">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-head-left"><span class="card-icon">🦺</span><div><div class="card-title">BHV — Bedrijfshulpverlening</div><div class="card-sub">Organisatie, taken en wettelijke basis</div></div></div>
+            <span class="card-chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <p>BHV staat voor Bedrijfshulpverlening. Op grond van <strong>art. 15 Arbowet</strong> is elke werkgever verplicht BHV te organiseren. BHV is de eerste schakel in noodsituaties — vóór de hulpdiensten ter plaatse zijn.</p>
+            <h4>Wettelijke verplichtingen BHV (Arbowet art. 15)</h4>
+            <ul>
+              <li>Voldoende BHV'ers aanstellen (afhankelijk van risico en personeel)</li>
+              <li>BHV'ers uitrusten met benodigde materialen en bevoegdheden</li>
+              <li>Opleiding en jaarlijkse herhalingstraining verplicht</li>
+              <li>BHV-plan opstellen en actueel houden</li>
+            </ul>
+            <h4>Taken BHV'er</h4>
+            <ul>
+              <li><strong>EHBO:</strong> eerste hulp bij ongevallen en ziektes</li>
+              <li><strong>Brandbestrijding:</strong> eerste aanval met handblussers (niet meer dan 1 minuut proberen)</li>
+              <li><strong>Ontruiming:</strong> organiseren en begeleiden van evacuatie</li>
+              <li><strong>Communicatie:</strong> hulpdiensten alarmeren en ontvangen</li>
+            </ul>
+            <h4>BHV norm: hoeveel BHV'ers?</h4>
+            <ul>
+              <li>Laag risico (kantoor): 1 BHV per 50 medewerkers (richtlijn)</li>
+              <li>Middel risico (productie): 1 per 25-30</li>
+              <li>Hoog risico (chemie, zorg): meer, specifiek bepaald in RI&E</li>
+              <li>Altijd minimaal 1 BHV aanwezig bij elk aanwezig moment</li>
+            </ul>
+            <h4>Relatie beveiliger ↔ BHV</h4>
+            <ul>
+              <li>Beveiliger is NIET automatisch BHV'er (tenzij gecertificeerd)</li>
+              <li>Beveiliger en BHV werken samen bij calamiteiten</li>
+              <li>Beveiliger bewaakt ingang, ontvangt brandweer, bewaakt verzamelplaats</li>
+              <li>BHV'er doet de EHBO en ruimtelijk ontruimingswerk</li>
+            </ul>
+            <span class="tag green">Arbowet art. 15</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-head-left"><span class="card-icon">❤️</span><div><div class="card-title">Reanimatie (CPR)</div><div class="card-sub">Hartstilstand — elke seconde telt</div></div></div>
+            <span class="card-chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <h4>Stappenplan reanimatie (ERC richtlijnen 2021)</h4>
+            <ul>
+              <li><strong>1. Veiligheid:</strong> Is de omgeving veilig? Draag handschoenen indien beschikbaar</li>
+              <li><strong>2. Beoordeel bewustzijn:</strong> Schud schouders, roep: "Bent u in orde?"</li>
+              <li><strong>3. Roep om hulp:</strong> Stuur iemand voor AED en 112 — jij blijft bij slachtoffer</li>
+              <li><strong>4. Vrije luchtweg:</strong> Hoofd achteroveren, kin omhoog (head-tilt chin-lift)</li>
+              <li><strong>5. Check ademhaling:</strong> Kijk, luister, voel — maximaal 10 seconden. Geen normale ademhaling = start CPR</li>
+              <li><strong>6. 112 bellen:</strong> Als nog niet gedaan — spreakerphone zodat je handen vrij zijn</li>
+              <li><strong>7. Borstcompressies:</strong> 30 keer — midden borstbeen, diepte 5-6 cm, tempo 100-120/min</li>
+              <li><strong>8. Beademingen:</strong> 2 beademingen (mond-op-mond) — borst moet rijzen</li>
+              <li><strong>9. Herhaal:</strong> 30:2 ritme tot AED beschikbaar is of hulpdiensten overnemen</li>
+            </ul>
+            <h4>CPR alleen (zonder beademing)</h4>
+            <p>Als je niet wilt of kunt beademen: ga dan door met <strong>alleen borstcompressies</strong> (continue, 100-120/min). Dit is aanzienlijk effectiever dan helemaal niets doen.</p>
+            <div class="info-box red">Bij elke minuut zonder CPR daalt de overlevingskans met 10%. Begin zo snel mogelijk — wacht niet op de AED.</div>
+            <h4>Herkenning hartstilstand</h4>
+            <ul>
+              <li>Bewusteloos — reageert niet op aanspreken of schudden</li>
+              <li>Geen normale ademhaling (gorgelende, snakkende ademhaling = niet normaal)</li>
+              <li>Blauwverkleuring lippen en nagels</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-head-left"><span class="card-icon">⚡</span><div><div class="card-title">AED — Automatische Externe Defibrillator</div><div class="card-sub">Gebruik en aandachtspunten</div></div></div>
+            <span class="card-chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <p>Een AED herkent hartritmestoornissen die defibrilleerbaar zijn (ventrikelfibrillatie, VT) en geeft zo nodig een elektrische schok. De AED geeft gesproken instructies — volg ze op.</p>
+            <h4>ABCDE gebruik AED</h4>
+            <ul>
+              <li><strong>A</strong>anzetten: klep open → apparaat start automatisch</li>
+              <li><strong>B</strong>orst vrijmaken: kleding verwijderen, droogmaken indien nat</li>
+              <li><strong>C</strong>leef plakken: één elektrode rechts borstbeen (onder sleutelbeen), één links onder oksel</li>
+              <li><strong>D</strong>raad aansluiten op AED</li>
+              <li><strong>E</strong>verybudy back: "Niemand aanraken!" — analyse en schok alleen als iedereen weg is</li>
+            </ul>
+            <h4>Aandachtspunten AED</h4>
+            <ul>
+              <li>Pacemaker: elektrode minimaal 8 cm van pacemaker plaatsen</li>
+              <li>Pleisters/medicijnen op borst: verwijder ze voor elektrodenplaatsing</li>
+              <li>Natte ondergrond: slachtoffer droogleggen op droge plek</li>
+              <li>Kind (&lt;8 jaar of &lt;25 kg): gebruik kindklevers indien aanwezig, anders volwassene-elektrodes in AP-positie (voor/achter)</li>
+              <li>Na schok: direct doorgaan met CPR — niet wachten op controle</li>
+            </ul>
+            <div class="info-box green">Een AED kan iedereen gebruiken — het apparaat geeft duidelijke gesproken instructies en schopt alleen als het echt nodig is. Durf het te gebruiken.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-head-left"><span class="card-icon">🩸</span><div><div class="card-title">EHBO — Bloedingen en shock</div><div class="card-sub">Stelpen en shockbehandeling</div></div></div>
+            <span class="card-chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <h4>Ernstige bloeding stelpen</h4>
+            <ul>
+              <li><strong>Directe druk:</strong> druk stevig met steriel verband of schone doek — minimaal 10 minuten onafgebroken</li>
+              <li><strong>Verhoogde houding:</strong> wond zo mogelijk boven hartniveau houden</li>
+              <li><strong>Drukverband:</strong> wikkel extra verband strak over het eerste</li>
+              <li><strong>Tourniquet:</strong> bij levensbedreigende ledematenbleeding — zet zo hoog mogelijk aan, noteer tijdstip</li>
+            </ul>
+            <h4>Tekenen van shock</h4>
+            <ul>
+              <li>Bleek, koud, klam zweet</li>
+              <li>Snelle, zwakke pols</li>
+              <li>Versnelde ademhaling</li>
+              <li>Verwardheid, onrust of juist apathie</li>
+              <li>Dorst</li>
+            </ul>
+            <h4>Behandeling shock</h4>
+            <ul>
+              <li>Lig-positie met benen omhoog (Trendelenburg) — tenzij hoofd- of borstletsel</li>
+              <li>Warmte behouden: deken of jas</li>
+              <li>Geruststellen en kalm houden</li>
+              <li>Niets drinken geven</li>
+              <li>112 bellen indien niet al gedaan</li>
+            </ul>
+            <div class="info-box red">Niet aarzelen bij ernstige bloeding — aarzel niet om krachtig te drukken. Een bloeding van 1,5 liter of meer (bij volwassene) is levensbedreigend.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-head-left"><span class="card-icon">🧠</span><div><div class="card-title">ABCDE triage methode</div><div class="card-sub">Systematische beoordeling slachtoffer</div></div></div>
+            <span class="card-chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <p>De ABCDE methode is de internationale standaard voor snelle beoordeling van een slachtoffer — van meest levensbedreigende naar minder acute aandoeningen.</p>
+            <div class="table-wrap"><table>
+              <tr><th>Stap</th><th>Wat</th><th>Controleer</th><th>Actie bij probleem</th></tr>
+              <tr><td><strong>A</strong> — Airway</td><td>Luchtweg</td><td>Vrij? Bewuste patiënt praat = vrije luchtweg</td><td>Hoofd achteroveren, kin omhoog</td></tr>
+              <tr><td><strong>B</strong> — Breathing</td><td>Ademhaling</td><td>Frequentie, diepte, symmetrie</td><td>Zuurstof, beademing</td></tr>
+              <tr><td><strong>C</strong> — Circulation</td><td>Bloedsomloop</td><td>Pols, bloeding, huidskleur</td><td>Bloeding stelpen, shock behandelen</td></tr>
+              <tr><td><strong>D</strong> — Disability</td><td>Bewustzijn</td><td>AVPU scale (Alert, Voice, Pain, Unresponsive)</td><td>Stabiele zijligging indien bewusteloos</td></tr>
+              <tr><td><strong>E</strong> — Exposure</td><td>Ontbloten/Omgeving</td><td>Verdere letsels, omgevingstemperatuur</td><td>Warmte, rust, transport</td></tr>
+            </table></div>
+            <div class="info-box">AVPU: Alert (reageert spontaan), Voice (reageert op aanspreken), Pain (reageert op pijnprikkel), Unresponsive (geen reactie). Alles onder A = 112 bellen.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-head-left"><span class="card-icon">😵</span><div><div class="card-title">Bewusteloosheid en stabiele zijligging</div><div class="card-sub">Procedure bij bewusteloos slachtoffer met ademhaling</div></div></div>
+            <span class="card-chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <h4>Wanneer stabiele zijligging?</h4>
+            <p>Bij een bewusteloos slachtoffer dat <strong>wel</strong> normaal ademt — niet reanimeren, maar in stabiele zijligging leggen om de luchtweg vrij te houden (bij bewusteloze kan de tong terugzakken of braaksel de luchtweg blokkeren).</p>
+            <h4>Procedure stabiele zijligging</h4>
+            <ul>
+              <li>Knieel naast het slachtoffer</li>
+              <li>Arm dichtstbij jou: uitgestrekt, hand omhoog (90° van het lichaam)</li>
+              <li>Verre arm: leg de hand op de wang aan jouw kant</li>
+              <li>Verre knie: optrekken tot voet plat op de grond staat</li>
+              <li>Draai naar jouw kant toe met het been als hefboom</li>
+              <li>Hoofd licht achteroveren, mond naar beneden</li>
+              <li>Controleer ademhaling elk uur (of totdat hulp arriveert)</li>
+            </ul>
+            <div class="info-box green">Nooit stabiele zijligging bij vermoeden van nekletsel of wervelkolombeschadiging — laat het slachtoffer dan zo liggen en wacht op 112.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-head-left"><span class="card-icon">🤢</span><div><div class="card-title">Vergiftiging en chemische blootstelling</div><div class="card-sub">EHBO bij gevaarlijke stoffen</div></div></div>
+            <span class="card-chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <h4>Inademing giftige stoffen</h4>
+            <ul>
+              <li>Breng slachtoffer naar frisse lucht — zorg dat jij NIET ook blootgesteld wordt</li>
+              <li>Losse kleding losknopen</li>
+              <li>Bij bewusteloosheid: stabiele zijligging + 112</li>
+              <li>Bij ademstilstand: reanimeren (pas op voor mond-op-mondbeademing bij HCN, chloor, etc.)</li>
+            </ul>
+            <h4>Huidcontact chemische stof</h4>
+            <ul>
+              <li>Spoel direct 15-20 minuten met veel lauw water</li>
+              <li>Kleding voorzichtig verwijderen (bescherm jezelf met handschoenen)</li>
+              <li>Bij oogcontact: spoel met oogdouche of waterstraal 15 minuten</li>
+              <li>Bel altijd 112 en informeer over de stof (MSDS/veiligheidsinformatieblad tonen)</li>
+            </ul>
+            <h4>EHBO-kit standaardinhoud voor beveiligers</h4>
+            <ul>
+              <li>Steriele wondverbanden en zwachtels</li>
+              <li>Wegwerphandschoenen (nitril)</li>
+              <li>Veiligheidsdeken (folie)</li>
+              <li>Koelelement / coldpack</li>
+              <li>Schaartje en pleisters</li>
+              <li>Mondmasker/gezichtsscherm voor reanimatie</li>
+              <li>Oogspoelingsvloeistof</li>
+            </ul>
+            <div class="info-box orange">Zorg dat jij als beveiliger altijd weet waar de dichtstbijzijnde EHBO-kist, AED en oogdouche in het object zijn — controleer dit bij aanvang van iedere dienst.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head" onclick="toggleCard(this)">
+            <div class="card-head-left"><span class="card-icon">🦴</span><div><div class="card-title">Botbreuken, verstuikingen en kneuzing</div><div class="card-sub">RICE methode en immobilisatie</div></div></div>
+            <span class="card-chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <h4>Herkenning botbreuk</h4>
+            <ul>
+              <li>Heftige pijn op de breuklijn, verergert bij beweging</li>
+              <li>Zwelling en blauwe verkleuring</li>
+              <li>Misvormde stand van het ledemaat</li>
+              <li>Kraken of klikgeluid bij letsel</li>
+              <li>Niet kunnen bewegen of belasten</li>
+            </ul>
+            <h4>RICE methode (verstuiking/lichte breuk)</h4>
+            <ul>
+              <li><strong>R</strong>est — Laat het lichaamsdeel rust houden</li>
+              <li><strong>I</strong>ce — Koud kompres, maximaal 20 minuten (niet direct op huid)</li>
+              <li><strong>C</strong>ompression — Zwachtel ter ondersteuning (niet zo strak dat doorbloeding stopt)</li>
+              <li><strong>E</strong>levation — Ledemaat hoger dan het hart</li>
+            </ul>
+            <h4>Wanneer 112?</h4>
+            <ul>
+              <li>Open botbreuk (bot steekt door huid)</li>
+              <li>Vermoeden van rug-, nek- of bekkenfractuur</li>
+              <li>Ledemaat staat duidelijk scheef (verplaatsing)</li>
+              <li>Verlies van gevoel of beweging onder de breukplaats</li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
     <!-- ══════════════════════════════════════ KENNISBANK ══ -->
     <div class="page" id="page-kennis">
